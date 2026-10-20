@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Record — Law 4 Warriors Demo</title>
+<style>
+  :root{
+    --navy:#0b1f3a; --navy-deep:#0d1420; --gold:#c9a227; --ink:#1f2937; --muted:#5b6b82;
+    --line:#d8dee8; --bg:#eef1f5; --good:#1e7d4f; --good-bg:#e3f3ea;
+    --warn:#9a6a00; --warn-bg:#fdf0d3; --bad:#b3261e; --bad-bg:#fbe7e5; --info-bg:#e8eef7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.55}
+  .badge{background:var(--gold);color:var(--navy-deep);text-align:center;
+    padding:9px 14px;font-size:13px;letter-spacing:.14em;font-weight:700}
+  .badge span{font-weight:400;letter-spacing:.02em}
+  .badge a{color:var(--navy-deep)}
+  header{background:var(--navy-deep);border-bottom:4px solid var(--gold);padding:30px 20px 24px;text-align:center}
+  .brand{font-family:Georgia,"Times New Roman",serif;letter-spacing:.3em;color:var(--gold);
+    font-size:12px;text-transform:uppercase}
+  header h1{font-family:Georgia,serif;color:#fff;font-weight:400;font-size:30px;margin:10px 0 4px}
+  header p{color:#c3cfe0;margin:0;font-size:15px}
+  .wrap{max-width:880px;margin:0 auto;padding:26px 18px 56px}
+  .stat{display:inline-block;background:var(--good-bg);color:var(--good);border:1px solid #bfe3cf;
+    border-radius:20px;padding:3px 14px;font-size:13.5px;font-weight:600;margin-bottom:18px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:16px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px 20px}
+  .panel h2{font-family:Georgia,serif;color:var(--navy);font-size:18px;margin:0 0 12px;
+    border-bottom:2px solid var(--gold);padding-bottom:5px}
+  dl{margin:0}
+  dt{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:10px}
+  dt:first-child{margin-top:0}
+  dd{margin:2px 0 0;font-size:16px}
+  dd .note{font-size:13px;color:var(--muted)}
+  .deadline{background:var(--navy);border:1px solid var(--navy);border-top:4px solid var(--gold);
+    border-radius:8px;color:#e8edf5;padding:20px 24px;margin-bottom:16px}
+  .deadline .lbl{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+  .deadline .date{font-family:Georgia,serif;font-size:30px;color:#fff;margin:4px 0}
+  .deadline p{margin:0;color:#c3cfe0;font-size:14.5px}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  caption{font-family:Georgia,serif;color:var(--navy);font-size:18px;text-align:left;padding:14px 16px 10px;background:#fff}
+  th{background:var(--navy);color:#fff;text-align:left;font-size:12.5px;letter-spacing:.06em;
+    text-transform:uppercase;padding:9px 12px}
+  td{padding:9px 12px;border-top:1px solid var(--line);font-size:14.5px;vertical-align:top}
+  .pct{font-weight:700;font-size:16px}
+  .chip{display:inline-block;border-radius:12px;padding:1px 10px;font-size:12.5px;font-weight:600}
+  .chip.granted{background:var(--good-bg);color:var(--good)}
+  .chip.increased{background:var(--info-bg);color:var(--navy)}
+  .chip.continued{background:#eef1f5;color:var(--muted)}
+  .chip.denied{background:var(--bad-bg);color:var(--bad)}
+  .chip.deferred{background:var(--warn-bg);color:var(--warn)}
+  .source{background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold);
+    border-radius:6px;padding:14px 18px;margin-top:16px;font-size:14px;color:var(--muted)}
+  .source strong{color:var(--ink)}
+  .back{display:inline-block;margin-top:20px;color:var(--navy)}
+</style>
+</head>
+<body>
+
+<div class="badge">LIVE DEMO — SAMPLE DATA ONLY <span>· Fictional case</span> · <a href="index.html">Demo home</a></div>
+
+<header>
+  <div class="brand">Law 4 Warriors</div>
+  <h1>The Master Record</h1>
+  <p>Everything the system pulled out of one VA decision letter — the single record every form, analysis, and deadline reads from.</p>
+</header>
+
+<div class="wrap">
+
+  <span class="stat">✓ 19 of 19 extracted fields verified against the letter</span>
+
+  <div class="grid">
+    <div class="panel">
+      <h2>Veteran</h2>
+      <dl>
+        <dt>Full name</dt><dd>James R. Calloway</dd>
+        <dt>VA file number</dt><dd>999-88-7777</dd>
+        <dt>Mailing address</dt><dd>1420 Bluebonnet Lane, Temple, TX 76502</dd>
+        <dt>Date of birth</dt><dd><span class="note">Not printed on the VA letter — captured once at intake, then it fills everywhere too</span></dd>
+      </dl>
+    </div>
+    <div class="panel">
+      <h2>Service</h2>
+      <dl>
+        <dt>Branch</dt><dd>United States Army</dd>
+        <dt>Entered service</dt><dd>June 12, 1998</dd>
+        <dt>Separated</dt><dd>June 11, 2004</dd>
+        <dt>Service era</dt><dd>Gulf War Era</dd>
+      </dl>
+    </div>
+    <div class="panel">
+      <h2>The decision</h2>
+      <dl>
+        <dt>Decision date</dt><dd>October 6, 2026</dd>
+        <dt>Regional office</dt><dd>Waco, Texas</dd>
+        <dt>Claim received</dt><dd>March 14, 2025</dd>
+        <dt>Combined evaluation</dt><dd><strong>80%</strong></dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="deadline">
+    <div class="lbl">Appeal deadline — computed by the system</div>
+    <div class="date">October 6, 2027</div>
+    <p>One year from the decision date: file a Supplemental Claim (20-0995), a Higher-Level
+    Review (20-0996), or a Board Appeal (10182) by this date to keep the earliest effective
+    date alive. Nobody in the office has to remember to calculate it — the clock starts the
+    moment the letter is read, and the deadline engine watches it from here.</p>
+  </div>
+
+  <table>
+    <caption>Ratings from the decision — all six, exactly as the VA stated them</caption>
+    <thead>
+      <tr><th>Condition</th><th>Diagnostic code</th><th>Evaluation</th><th>Effective date</th><th>VA&rsquo;s decision</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Posttraumatic stress disorder (PTSD)</td><td>9411</td><td class="pct">70%</td><td>March 14, 2025</td><td><span class="chip increased">Increased</span></td></tr>
+      <tr><td>Lumbosacral strain</td><td>5237</td><td class="pct">20%</td><td>March 14, 2025</td><td><span class="chip granted">Granted</span></td></tr>
+      <tr><td>Tinnitus</td><td>6260</td><td class="pct">10%</td><td>March 14, 2025</td><td><span class="chip continued">Continued</span></td></tr>
+      <tr><td>Left knee limitation of flexion</td><td>5260</td><td class="pct">0%</td><td>March 14, 2025</td><td><span class="chip continued">Continued</span></td></tr>
+      <tr><td>Right knee instability</td><td>5257</td><td class="pct">—</td><td>—</td><td><span class="chip denied">Denied</span></td></tr>
+      <tr><td>Migraine headaches</td><td>8100</td><td class="pct">—</td><td>—</td><td><span class="chip deferred">Deferred</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="source">
+    <strong>Where this came from:</strong> the sample decision letter in Step 1 of this demo
+    (<a href="files/sample-va-rating-decision.pdf">sample-va-rating-decision.pdf</a>), read by the
+    extraction pipeline on October 20, 2026. In the proof of concept, a local stand-in reader
+    produced output in Adobe Extract&rsquo;s shape; the live Adobe connection (Step 5) drops into
+    the same pipeline without changing anything downstream — and adds OCR for scanned letters,
+    which the stand-in can&rsquo;t do. The denied and deferred items above are exactly what the
+    three appeal forms in Step 3 were populated from.
+  </div>
+
+  <a class="back" href="index.html">← Back to the demo home</a>
+
+</div>
+</body>
+</html>

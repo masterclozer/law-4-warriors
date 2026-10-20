@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connecting the Firm's Adobe Account — Law 4 Warriors Demo</title>
+<style>
+  :root{--navy:#0b1f3a;--navy-deep:#0d1420;--gold:#c9a227;--ink:#1f2937;--muted:#5b6b82;--line:#d8dee8;--bg:#eef1f5}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.65}
+  .badge{background:var(--gold);color:var(--navy-deep);text-align:center;
+    padding:9px 14px;font-size:13px;letter-spacing:.14em;font-weight:700}
+  .badge span{font-weight:400;letter-spacing:.02em} .badge a{color:var(--navy-deep)}
+  header{background:var(--navy-deep);border-bottom:4px solid var(--gold);padding:28px 20px 22px;text-align:center}
+  .brand{font-family:Georgia,serif;letter-spacing:.3em;color:var(--gold);font-size:12px;text-transform:uppercase}
+  header h1{font-family:Georgia,serif;color:#fff;font-weight:400;font-size:28px;margin:10px 0 0}
+  .wrap{max-width:860px;margin:0 auto;padding:26px 22px 56px;background:#fff;
+    border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  .doc h1{font-family:Georgia,serif;color:var(--navy);font-size:24px;border-bottom:2px solid var(--gold);padding-bottom:6px}
+  .doc h2{font-family:Georgia,serif;color:var(--navy);font-size:20px;margin-top:30px}
+  .doc h3{font-family:Georgia,serif;color:var(--navy);font-size:17px;margin-top:24px}
+  .doc table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14.5px}
+  .doc th{background:var(--navy);color:#fff;text-align:left;padding:8px 10px}
+  .doc td{border:1px solid var(--line);padding:8px 10px;vertical-align:top}
+  .doc blockquote{border-left:4px solid var(--gold);margin:14px 0;padding:8px 16px;background:#fdf8e7;color:#4c4630}
+  .doc code{background:#eef1f5;padding:1px 5px;border-radius:3px;font-size:.92em}
+  .doc li{margin:4px 0}
+  .doc hr{border:none;border-top:1px solid var(--line);margin:26px 0}
+  .back{display:inline-block;margin-top:26px;color:var(--navy)}
+</style>
+</head>
+<body>
+<div class="badge">LIVE DEMO — SAMPLE DATA ONLY <span>· Fictional case data throughout</span> · <a href="index.html">Demo home</a></div>
+<header><div class="brand">Law 4 Warriors</div><h1>Connecting the Firm's Adobe Account</h1></header>
+<div class="wrap"><div class="doc">
+<h1>Connecting Your Firm's Adobe Account — Law 4 Warriors</h1>
+<p><strong>One page. Five minutes. You do this once, when the system is delivered.</strong></p>
+<p>The Law 4 Warriors system uses Adobe Acrobat Services (PDF Extract) to read
+VA rating decision letters and pull the ratings, dates, and deadlines into
+each client's master record automatically. The system ships with <strong>no Adobe
+account attached</strong>. You connect your firm's own account — here's why, and how.</p>
+<h2>Why the Adobe account must be the firm's</h2>
+<ul>
+<li><strong>Billing.</strong> Usage is billed to the account holder. At this firm's volume
+  the free tier (below) should cover you for the foreseeable future — but if
+  that ever changes, the bill should be the firm's, in the firm's name.</li>
+<li><strong>Audit trail.</strong> Every Adobe API call is logged against your account. When
+  Adobe's logs — or opposing counsel, or the VA — ask whose credentials
+  processed a veteran's decision letter, the answer should be "the firm's,"
+  never a vendor's personal account.</li>
+<li><strong>Terms.</strong> Adobe's developer terms tie API credentials to the account
+  holder. Running client documents through someone else's account puts the
+  firm outside those terms.</li>
+<li><strong>Control.</strong> Your credentials, your off-switch. You can revoke access the
+  moment you choose (see "Revoke or rotate" below) without asking anyone.</li>
+</ul>
+<h2>Step-by-step: create the credentials (Adobe Developer Console)</h2>
+<ol>
+<li><strong>Adobe ID.</strong> If the firm doesn't have one, create an Adobe ID at
+   adobe.com using a firm-controlled email address (not a personal one).
+   Sign in with it.</li>
+<li><strong>Open the Developer Console.</strong> Go to <strong>developer.adobe.com/console</strong>.</li>
+<li><strong>Create a project.</strong> Click <strong>Create new project</strong>. Name it
+   <code>Law 4 Warriors</code> (the name is for your eyes only).</li>
+<li><strong>Add the API.</strong> In the project, click <strong>Add API</strong>. Choose
+   <strong>Adobe Acrobat Services</strong> and click <strong>Next</strong>. (This one API includes
+   PDF Extract, which is what the system uses.)</li>
+<li><strong>Create the credential.</strong> When asked for a credential type, choose
+   <strong>OAuth Server-to-Server</strong>, give it a name (e.g. <code>L4W backend</code>), and
+   click <strong>Save configured API</strong>.</li>
+<li><strong>Copy the two values.</strong> Adobe now displays a <strong>Client ID</strong> and a
+   <strong>Client Secret</strong>. Copy both — treat the secret like a password. (If you
+   ever lose it, you can generate a fresh one; see below.)</li>
+</ol>
+<h2>Paste them into the system</h2>
+<p>Open the <strong>Connect Adobe</strong> setup screen in the Law 4 Warriors admin
+(the <code>connect-adobe.html</code> page delivered with the backend), paste the
+<strong>Client ID</strong> and <strong>Client Secret</strong> into Step 2, and click
+<strong>Save credentials</strong>. They are stored <strong>encrypted</strong> (Fernet encryption) in
+a vault file on your server. The secret is never shown on screen again.</p>
+<blockquote>
+<p>Command-line alternative: <code>python adobe_connect.py set</code>, then follow the
+prompts. Check state any time with <code>python adobe_connect.py status</code>.</p>
+</blockquote>
+<h2>Test the connection</h2>
+<p>On the Connect Adobe screen, click <strong>Test connection</strong> (or run
+<code>python adobe_connect.py test</code>). The system performs a real sign-in against
+Adobe's login service with your credentials:</p>
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Connected</strong></td>
+<td>Adobe issued an access token. You're live. Tokens last 24 hours; the system refreshes them automatically — nothing for you to renew by hand.</td>
+</tr>
+<tr>
+<td><strong>Authentication failed</strong></td>
+<td>Adobe rejected the credentials: a typo, a secret that was regenerated, or a credential from a project without the Acrobat Services API. Re-copy from the Console and test again.</td>
+</tr>
+<tr>
+<td><strong>Configured — untested</strong></td>
+<td>Credentials are saved but no test has run yet. Click Test.</td>
+</tr>
+</tbody>
+</table>
+<h2>What the free tier covers — and when you'd pay</h2>
+<ul>
+<li>The Acrobat Services free tier includes <strong>500 document transactions per
+  month</strong> at no cost and requires no credit card. Processing one decision
+  letter is a small number of transactions.</li>
+<li>The firm opens roughly <strong>4–5 new cases a month</strong>. Even with re-processing,
+  appeals, and testing, expect to use a small fraction of the free tier.</li>
+<li>You would only need a <strong>paid plan</strong> if the firm's volume grows far beyond
+  that, or if Adobe changes its free-tier terms. Paid plans are per-transaction
+  volume agreements arranged with Adobe — set one up only if the system
+  reports you're approaching the limit.</li>
+<li><strong>Acrobat Sign</strong> (Stage 2 — e-signature on the 21-22a, fee agreement, and
+  releases) is a separate Adobe product with its own subscription; it
+  connects the same way when that stage is delivered.</li>
+</ul>
+<h2>Revoke or rotate the credentials</h2>
+<ul>
+<li><strong>Rotate</strong> (routine hygiene, or staff change): in the Developer Console,
+  open the project → the OAuth credential → generate a <strong>new Client Secret</strong>
+  (or add a second credential and delete the old one). Paste the new secret
+  into Connect Adobe and click <strong>Test connection</strong>. The old secret stops
+  working the moment you delete it in the Console.</li>
+<li><strong>Revoke completely</strong>: delete the credential (or the whole project) in
+  the Developer Console. Adobe access ends immediately, everywhere.</li>
+<li><strong>Disconnect this system only</strong>: run <code>python adobe_connect.py clear</code>
+  (or the admin tool's Clear credentials). The vault forgets the
+  credentials; the Adobe-side credential technically still exists, so revoke
+  it in the Console too if you want a clean cut.</li>
+</ul>
+<h2>Where your credentials live</h2>
+<p>They never leave your server. The Client ID and Secret sit encrypted in
+<code>adobe-vault.json</code> on the machine that runs the backend, unlocked by a
+vault key stored on that same machine. The only place they are ever sent
+is Adobe's own login endpoint (<code>ims-na1.adobelogin.com</code>) — which is the
+entire point of them. They are not in the website, not in GitHub, not in
+any document, and were never in the system as delivered: it arrived with
+an empty vault, waiting for yours.</p>
+</div>
+<a class="back" href="index.html">&larr; Back to the demo home</a>
+</div>
+</body>
+</html>

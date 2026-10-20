@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go-Live Checklist & Cost Breakdown — Law 4 Warriors Demo</title>
+<style>
+  :root{--navy:#0b1f3a;--navy-deep:#0d1420;--gold:#c9a227;--ink:#1f2937;--muted:#5b6b82;--line:#d8dee8;--bg:#eef1f5}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.65}
+  .badge{background:var(--gold);color:var(--navy-deep);text-align:center;
+    padding:9px 14px;font-size:13px;letter-spacing:.14em;font-weight:700}
+  .badge span{font-weight:400;letter-spacing:.02em} .badge a{color:var(--navy-deep)}
+  header{background:var(--navy-deep);border-bottom:4px solid var(--gold);padding:28px 20px 22px;text-align:center}
+  .brand{font-family:Georgia,serif;letter-spacing:.3em;color:var(--gold);font-size:12px;text-transform:uppercase}
+  header h1{font-family:Georgia,serif;color:#fff;font-weight:400;font-size:28px;margin:10px 0 0}
+  .wrap{max-width:860px;margin:0 auto;padding:26px 22px 56px;background:#fff;
+    border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  .doc h1{font-family:Georgia,serif;color:var(--navy);font-size:24px;border-bottom:2px solid var(--gold);padding-bottom:6px}
+  .doc h2{font-family:Georgia,serif;color:var(--navy);font-size:20px;margin-top:30px}
+  .doc h3{font-family:Georgia,serif;color:var(--navy);font-size:17px;margin-top:24px}
+  .doc table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14.5px}
+  .doc th{background:var(--navy);color:#fff;text-align:left;padding:8px 10px}
+  .doc td{border:1px solid var(--line);padding:8px 10px;vertical-align:top}
+  .doc blockquote{border-left:4px solid var(--gold);margin:14px 0;padding:8px 16px;background:#fdf8e7;color:#4c4630}
+  .doc code{background:#eef1f5;padding:1px 5px;border-radius:3px;font-size:.92em}
+  .doc li{margin:4px 0}
+  .doc hr{border:none;border-top:1px solid var(--line);margin:26px 0}
+  .back{display:inline-block;margin-top:26px;color:var(--navy)}
+</style>
+</head>
+<body>
+<div class="badge">LIVE DEMO — SAMPLE DATA ONLY <span>· Fictional case data throughout</span> · <a href="index.html">Demo home</a></div>
+<header><div class="brand">Law 4 Warriors</div><h1>Go-Live Checklist & Cost Breakdown</h1></header>
+<div class="wrap"><div class="doc">
+<h1>Law 4 Warriors — Go-Live Checklist &amp; Cost Breakdown</h1>
+<p><strong>Goal:</strong> take the proven pipeline (decision-letter extraction → master record →
+auto-filled forms → deadline engine) from proof of concept to a live system the
+firm runs on, at the lowest sane cost. The public website stays exactly where it
+is — GitHub Pages is the front door. Only the <em>backend</em> needs a home.</p>
+<hr />
+<h2>The steps, in order</h2>
+<h3>1. Buy the domain (~15 minutes)</h3>
+<ul>
+<li>Register the firm's domain (e.g. <code>law4warriors.com</code>) at any mainstream
+  registrar. <strong>~$12/year.</strong></li>
+<li>The domain matters because the system lives on subdomains:</li>
+<li><code>law4warriors.com</code> / <code>www</code> → the public site (stays on GitHub Pages, free)</li>
+<li><code>intake.law4warriors.com</code> → veteran-facing intake</li>
+<li><code>app.law4warriors.com</code> → the staff system (login required, never public)</li>
+</ul>
+<h3>2. Provision one small server (~30 minutes)</h3>
+<p>One virtual private server runs the whole backend at this firm's volume
+(~4–5 new cases/month): the app, the database, and encrypted document storage
+on a single box.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hetzner Cloud (small instance)</td>
+<td>~€4.50/month (≈ $5)</td>
+</tr>
+<tr>
+<td>DigitalOcean (basic droplet)</td>
+<td>$6/month</td>
+</tr>
+<tr>
+<td>Oracle Cloud Always Free tier</td>
+<td><strong>$0</strong> (real, but capacity/availability fine print — fine for a pilot, less ideal as the permanent home)</td>
+</tr>
+</tbody>
+</table>
+<p>Pick one, harden it on day one: SSH keys only (no password login), firewall
+allowing only web + SSH, automatic security updates on.</p>
+<h3>3. Deploy the backend + database</h3>
+<ul>
+<li>Deploy the application and its database (SQLite is honestly enough at this
+  volume; PostgreSQL if the firm prefers — same box either way).</li>
+<li>HTTPS certificates via <strong>Let's Encrypt — free</strong>, auto-renewing (a Caddy or
+  certbot setup does this without human attention).</li>
+<li>The credential vault pattern from the POC carries over unchanged: no vendor
+  account is baked into the system as delivered.</li>
+</ul>
+<h3>4. Point the DNS</h3>
+<ul>
+<li>Apex + <code>www</code> stay pointed at GitHub Pages (the public site doesn't move).</li>
+<li><code>intake.</code> and <code>app.</code> point at the server.</li>
+<li>SSL goes green on all four names before anyone is invited in.</li>
+</ul>
+<h3>5. She connects the firm's Adobe account (~5 minutes, once)</h3>
+<ul>
+<li>This is the Connect Adobe step from the demo: the firm creates its own free
+  Adobe Developer project, pastes its Client ID + Secret into the system's
+  encrypted vault, and clicks <strong>Test connection</strong>.</li>
+<li><strong>Cost: $0</strong> — the Acrobat Services free tier includes 500 document
+  transactions/month, far above this firm's volume. See the Adobe handoff
+  guide in this demo for the full walkthrough.</li>
+</ul>
+<h3>6. VA Lighthouse — sandbox now, production in parallel</h3>
+<ul>
+<li><strong>Sandbox access is free and immediate</strong> (developer.va.gov): build and test
+  against the Benefits Intake, Claims, and Forms APIs with synthetic data.</li>
+<li><strong>Production access is a VA review</strong>, not a purchase: org verification plus a
+  short demo to VA, and it rides on <strong>the attorney's accreditation</strong>. There is
+  no fee — but VA's timeline is VA's, so <strong>file the production application
+  early, in parallel with everything else</strong>, not at the end.</li>
+<li>Until production clears, filings go out the conventional way (the system
+  still prepares every packet); the API becomes the filing pipe the day VA
+  approves it.</li>
+</ul>
+<h3>7. Backups + access routine (set once, then forget)</h3>
+<ul>
+<li>Nightly encrypted backups of the database and document store to
+  <strong>Backblaze B2 — pennies/month</strong> (first 10 GB free).</li>
+<li>Restore test once at setup (a backup you've never restored is a hope, not
+  a backup).</li>
+<li>Two-factor authentication on: the server host account, the domain registrar,
+  GitHub, Adobe, and every staff login to the app.</li>
+<li>Standing routine: monthly OS/app updates, quarterly credential rotation
+  (covered in the Adobe guide), backup-restore spot check twice a year.</li>
+</ul>
+<hr />
+<h2>The full cost picture</h2>
+<p><strong>Required</strong></p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Domain</td>
+<td>~$12 / year</td>
+</tr>
+<tr>
+<td>Server (Hetzner ≈ $5/mo or DigitalOcean $6/mo)</td>
+<td>~$60–72 / year</td>
+</tr>
+<tr>
+<td>HTTPS (Let's Encrypt)</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>Backups (Backblaze B2)</td>
+<td>pennies / month</td>
+</tr>
+<tr>
+<td>Adobe Acrobat Services (free tier)</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>VA Lighthouse (sandbox + production)</td>
+<td>$0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Realistic total: ≈ $70–80 per year</strong> — the price of the domain plus one
+small server. (On Oracle's free tier it drops to ~$12/year, domain only.)</p>
+<p><strong>Optional add-ons (only if the firm wants them)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Cost</th>
+<th>What it buys</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E-fax service</td>
+<td>~$10 / month</td>
+<td>Fax filings to the VA Evidence Intake Center as a fallback pipe</td>
+</tr>
+<tr>
+<td>SMS (Twilio)</td>
+<td>~$1 / month + pennies per text</td>
+<td>Text reminders/nudges to clients (exam dates, unsigned forms)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>What "live" means, in one paragraph</h2>
+<p>A veteran finds the public site (unchanged), clicks into <code>intake.</code>, and one
+guided intake creates the case. The firm's staff work in <code>app.</code> — decision
+letters are read into the record automatically, forms come out filled, the
+deadline engine watches every clock, and filings go to the VA through
+Lighthouse once production access clears. Everything runs on one ~$5/month
+server under the firm's own domain, with the firm's own Adobe account, and
+nightly backups the firm controls.</p>
+</div>
+<a class="back" href="index.html">&larr; Back to the demo home</a>
+</div>
+</body>
+</html>

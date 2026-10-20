@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Demo — Law 4 Warriors</title>
+<style>
+  :root{
+    --navy:#0b1f3a; --navy-deep:#0d1420; --panel:#16202f; --gold:#c9a227; --gold-dark:#a8861c;
+    --ink:#1f2937; --muted:#5b6b82; --line:#d8dee8; --bg:#eef1f5; --good:#1e7d4f; --good-bg:#e3f3ea;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.6}
+  .badge{background:var(--gold);color:var(--navy-deep);text-align:center;
+    padding:9px 14px;font-size:13px;letter-spacing:.14em;font-weight:700}
+  .badge span{font-weight:400;letter-spacing:.02em}
+  header{background:var(--navy-deep);border-bottom:4px solid var(--gold);padding:38px 20px 30px;text-align:center}
+  .brand{font-family:Georgia,"Times New Roman",serif;letter-spacing:.3em;color:var(--gold);
+    font-size:13px;text-transform:uppercase}
+  header h1{font-family:Georgia,"Times New Roman",serif;color:#fff;font-weight:400;
+    font-size:36px;margin:12px 0 6px}
+  header p{color:#c3cfe0;margin:0 auto;max-width:640px;font-size:16px}
+  .wrap{max-width:920px;margin:0 auto;padding:28px 18px 60px}
+  .intro{background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold);
+    border-radius:6px;padding:18px 22px;margin-bottom:26px}
+  .intro p{margin:0}
+  h2.section{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:22px;
+    border-bottom:2px solid var(--gold);padding-bottom:6px;margin:34px 0 16px}
+  .step{background:#fff;border:1px solid var(--line);border-radius:8px;padding:22px 24px;margin-bottom:16px;
+    display:flex;gap:20px;align-items:flex-start}
+  .num{flex:0 0 auto;width:46px;height:46px;border-radius:50%;background:var(--navy);color:var(--gold);
+    font-family:Georgia,serif;font-size:22px;display:flex;align-items:center;justify-content:center;
+    border:2px solid var(--gold)}
+  .step h3{font-family:Georgia,serif;color:var(--navy);margin:2px 0 6px;font-size:20px}
+  .step p{margin:0 0 10px;color:var(--ink)}
+  .step p.small{color:var(--muted);font-size:14px;margin-bottom:0}
+  .stat{display:inline-block;background:var(--good-bg);color:var(--good);border:1px solid #bfe3cf;
+    border-radius:20px;padding:2px 12px;font-size:13px;font-weight:600;margin:0 0 10px}
+  a.btn{display:inline-block;background:var(--navy);color:#fff;text-decoration:none;
+    padding:9px 18px;border-radius:5px;font-size:15px;margin:2px 6px 4px 0;border:1px solid var(--navy)}
+  a.btn:hover{background:var(--gold);color:var(--navy-deep);border-color:var(--gold-dark)}
+  a.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+  a.btn.ghost:hover{background:var(--navy);color:#fff}
+  .forms-list{margin:4px 0 10px;padding-left:18px}
+  .forms-list li{margin:3px 0}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+  .card{background:var(--panel);border:1px solid #24334d;border-top:4px solid var(--gold);
+    border-radius:8px;padding:20px 22px;color:#e8edf5}
+  .card h3{font-family:Georgia,serif;color:#fff;margin:0 0 8px;font-size:19px}
+  .card p{color:#aeb9ca;font-size:14.5px;margin:0 0 14px}
+  .card a.btn{background:var(--gold);border-color:var(--gold-dark);color:var(--navy-deep)}
+  .card a.btn:hover{background:#fff;border-color:#fff}
+  footer{color:var(--muted);font-size:13.5px;text-align:center;padding:0 18px 40px;max-width:760px;margin:0 auto}
+  footer a{color:var(--navy)}
+  @media (max-width:560px){ .step{flex-direction:column;gap:12px} header h1{font-size:29px} }
+</style>
+</head>
+<body>
+
+<div class="badge">LIVE DEMO — SAMPLE DATA ONLY <span>· Every name, record, and document in this demo is fictional</span></div>
+
+<header>
+  <div class="brand">Law 4 Warriors</div>
+  <h1>The Claims System — Live Demo</h1>
+  <p>One veteran&rsquo;s paperwork, followed end to end: a VA decision letter comes in,
+     and claims, forms, and deadlines come out — with nothing typed twice.</p>
+</header>
+
+<div class="wrap">
+
+  <div class="intro">
+    <p><strong>What you&rsquo;re looking at:</strong> a working walkthrough of the system that has
+    already been built and verified as a proof of concept. Every page and document here uses the
+    same fictional sample case — <strong>James R. Calloway</strong> — so you can follow one file
+    through the whole pipeline. Nothing here is a mockup of the pipeline steps themselves:
+    the letter, the record, the filled forms, and the deadline digest are the real outputs.</p>
+  </div>
+
+  <h2 class="section">The pipeline, in five steps</h2>
+
+  <div class="step">
+    <div class="num">1</div>
+    <div>
+      <h3>A VA decision letter arrives</h3>
+      <p>This is the VA&rsquo;s paperwork — the rating decision the firm receives (or the veteran
+      brings in). Ratings, dates, and deadlines are buried in letters like this one, and today
+      someone in the office reads it and types everything out by hand.</p>
+      <a class="btn" href="files/sample-va-rating-decision.pdf">Read the sample letter (PDF)</a>
+      <p class="small">Fictional sample, watermarked on every page — the same letter the rest of this demo runs on.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">2</div>
+    <div>
+      <h3>The system reads it</h3>
+      <p>The letter is extracted into the case&rsquo;s <strong>master record</strong> — the single
+      source of truth for the whole file. Identity, service, every rating with its diagnostic code
+      and percentage, the decision date, and the appeal deadline the system computes from it.</p>
+      <div class="stat">19 of 19 extracted fields verified against the letter</div><br>
+      <a class="btn" href="master-record.html">See the master record</a>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">3</div>
+    <div>
+      <h3>Forms fill themselves</h3>
+      <p>That one record auto-populates the official VA forms — the real, current forms from
+      VA.gov, downloaded for this proof. The lawyer reviews a completed, still-editable packet
+      instead of typing one.</p>
+      <div class="stat">81 fields filled · 81 of 81 read back and verified exact</div>
+      <ul class="forms-list">
+        <li><a href="files/21-526EZ-filled.pdf">VA Form 21-526EZ — Disability Compensation claim</a></li>
+        <li><a href="files/20-0995-filled.pdf">VA Form 20-0995 — Supplemental Claim</a></li>
+        <li><a href="files/20-0996-filled.pdf">VA Form 20-0996 — Higher-Level Review</a></li>
+        <li><a href="files/10182-filled.pdf">VA Form 10182 — Board Appeal</a></li>
+        <li><a href="files/21-22a-filled.pdf">VA Form 21-22a — Appoint a representative</a></li>
+      </ul>
+      <a class="btn ghost" href="verification.html">How this was verified — field by field</a>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">4</div>
+    <div>
+      <h3>Deadlines stand guard</h3>
+      <p>VA practice runs on unforgiving clocks — the one-year appeal window above all. The
+      deadline engine starts the clock from the decision date on the letter itself and escalates
+      alerts as dates approach. Every Monday, the firm gets one page: every case, every clock,
+      worst first.</p>
+      <a class="btn" href="digest.html">See the Monday Docket Digest</a>
+      <p class="small">Sample digest with four fictional cases exercising every alert tier — overdue, critical, watch, on track.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">5</div>
+    <div>
+      <h3>She connects her own Adobe</h3>
+      <p>The system ships with <strong>no vendor account embedded</strong>. The document-reading
+      engine (Adobe Acrobat Services) is connected by the firm, under the firm&rsquo;s own name —
+      billing, audit trail, and the off-switch all belong to the firm. Credentials sit in an
+      encrypted vault on the firm&rsquo;s own server.</p>
+      <a class="btn" href="connect-adobe.html">See the Connect Adobe screen</a>
+      <a class="btn ghost" href="adobe-guide.html">Read the handoff guide</a>
+    </div>
+  </div>
+
+  <h2 class="section">Also in this demo</h2>
+  <div class="cards">
+    <div class="card">
+      <h3>Try the intake</h3>
+      <p>The veteran-facing front end: one guided intake creates the master record, and every
+      form, the ratings analyzer, and the deadline tracker read from that same record.
+      Change the record — every form changes with it.</p>
+      <a class="btn" href="intake.html">Open the intake demo</a>
+    </div>
+    <div class="card">
+      <h3>The full plan</h3>
+      <p>The complete system plan (19 pages): the five engines, the single-entry design, the
+      Automation Map of where the hours go, and the time-and-money picture for a firm of this size.</p>
+      <a class="btn" href="plan.pdf">Read the plan (PDF)</a>
+    </div>
+    <div class="card">
+      <h3>Going live</h3>
+      <p>The step-by-step path from this demo to a running system — domain, one small server,
+      her Adobe account, VA Lighthouse access — with the cheapest-sane cost breakdown.</p>
+      <a class="btn" href="go-live.html">See the go-live checklist</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p><strong>Sample data only.</strong> James R. Calloway is a fictional veteran invented for this
+  demonstration; his letter, record, forms, and deadlines are illustrative outputs of the working
+  pipeline, not a real case. No real client information appears anywhere in this demo.</p>
+  <p><a href="../index.html">← Back to the Law 4 Warriors homepage</a></p>
+</footer>
+
+</body>
+</html>

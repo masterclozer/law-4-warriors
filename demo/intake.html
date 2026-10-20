@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Law 4 Warriors — Intake Demo</title>
+    <style>
+      :root {
+        --navy: #0a1628;
+        --navy-2: #101f38;
+        --navy-3: #1a2c4a;
+        --gold: #c9a227;
+        --gold-dark: #a8861c;
+        --gold-soft: #fbf3d5;
+        --gold-line: #e7d488;
+        --bg: #eef1f5;
+        --card: #ffffff;
+        --ink: #16233a;
+        --ink-2: #4c5a70;
+        --ink-3: #7c8aa0;
+        --line: #d8dee8;
+        --field-bg: #f7f9fc;
+        --good: #1e7d4f;
+        --good-bg: #e3f3ea;
+        --warn: #9a6a00;
+        --warn-bg: #fdf0d3;
+        --bad: #b3261e;
+        --bad-bg: #fbe7e5;
+        --flash: #ffe9a8;
+        --shadow: 0 1px 3px rgba(10, 22, 40, .10), 0 4px 14px rgba(10, 22, 40, .06);
+        --radius: 10px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0d1420;
+          --card: #16202f;
+          --ink: #e8edf5;
+          --ink-2: #aeb9ca;
+          --ink-3: #7e8ca1;
+          --line: #2b3a52;
+          --field-bg: #1c293e;
+          --gold-soft: #3a3112;
+          --gold-line: #6d5c1e;
+          --good-bg: #14301f;
+          --warn-bg: #3a2f10;
+          --bad-bg: #3d1a17;
+          --flash: #6b5a14;
+          --shadow: 0 1px 3px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.3);
+        }
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        font-size: 15px;
+        line-height: 1.45;
+      }
+      button { font-family: inherit; cursor: pointer; }
+      input, select, textarea { font-family: inherit; font-size: 15px; color: var(--ink); }
+      h1, h2, h3 { margin: 0; }
+      .serif { font-family: Georgia, "Times New Roman", serif; }
+
+      /* ---------- Layout ---------- */
+      .shell { display: flex; min-height: 100vh; }
+      .sidebar {
+        width: 248px; flex: 0 0 248px; background: var(--navy); color: #dbe4f2;
+        display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+      }
+      .brand { padding: 20px 20px 14px; border-bottom: 1px solid rgba(201,162,39,.35); }
+      .brand .mark { display: flex; align-items: center; gap: 10px; }
+      .brand .eagle {
+        width: 38px; height: 38px; flex: 0 0 38px; border: 1.5px solid var(--gold);
+        border-radius: 50%; display: grid; place-items: center; color: var(--gold);
+      }
+      .brand h1 { font-family: Georgia, serif; font-size: 19px; letter-spacing: .04em; color: #fff; line-height: 1.15; }
+      .brand h1 span { color: var(--gold); }
+      .brand .tag { font-size: 10px; letter-spacing: .28em; color: #93a5c0; margin-top: 3px; text-transform: uppercase; }
+      .demo-badge {
+        margin: 14px 20px 4px; background: var(--gold); color: #20180a; border-radius: 6px;
+        padding: 8px 10px; font-size: 11.5px; font-weight: 700; letter-spacing: .02em; text-align: center;
+      }
+      .demo-badge small { display: block; font-weight: 600; opacity: .75; letter-spacing: 0; }
+      nav.main { padding: 12px 12px 6px; display: flex; flex-direction: column; gap: 2px; }
+      nav.main button {
+        display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+        background: transparent; border: 0; color: #c3cfe0; padding: 10px 12px;
+        border-radius: 8px; font-size: 14.5px; font-weight: 600; min-height: 42px;
+      }
+      nav.main button:hover { background: var(--navy-3); color: #fff; }
+      nav.main button.active { background: var(--navy-3); color: #fff; box-shadow: inset 3px 0 0 var(--gold); }
+      nav.main button svg { flex: 0 0 18px; opacity: .85; }
+      nav.main .nav-note { font-size: 11px; color: #7788a3; padding: 4px 12px 0; line-height: 1.4; }
+      .side-foot { margin-top: auto; padding: 14px 20px 18px; border-top: 1px solid rgba(255,255,255,.08); font-size: 11.5px; color: #7788a3; line-height: 1.5; }
+      .side-foot button {
+        width: 100%; margin-bottom: 10px; background: transparent; color: #c3cfe0;
+        border: 1px solid rgba(255,255,255,.25); border-radius: 8px; padding: 9px; font-weight: 600; min-height: 40px;
+      }
+      .side-foot button:hover { border-color: var(--gold); color: var(--gold); }
+
+      .content { flex: 1 1 auto; min-width: 0; padding: 26px 30px 60px; }
+      .content-inner { max-width: 1020px; margin: 0 auto; }
+      .view-head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-bottom: 18px; }
+      .view-head h2 { font-family: Georgia, serif; font-size: 27px; font-weight: 700; color: var(--ink); }
+      .view-head p { margin: 4px 0 0; color: var(--ink-2); max-width: 640px; }
+      .view-head .spacer { flex: 1; }
+
+      /* ---------- Buttons ---------- */
+      .btn {
+        display: inline-flex; align-items: center; gap: 8px; border-radius: 8px; border: 1px solid transparent;
+        padding: 10px 16px; font-size: 14.5px; font-weight: 700; min-height: 42px; text-decoration: none;
+      }
+      .btn-gold { background: var(--gold); color: #20180a; }
+      .btn-gold:hover { background: var(--gold-dark); color: #fff; }
+      .btn-navy { background: var(--navy); color: #fff; }
+      .btn-navy:hover { background: var(--navy-3); }
+      .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+      .btn-ghost:hover { border-color: var(--gold); }
+      .btn-sm { padding: 7px 12px; min-height: 36px; font-size: 13.5px; }
+      .btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+      /* ---------- Cards & tables ---------- */
+      .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+      .card-pad { padding: 20px 22px; }
+      .hint {
+        border: 1.5px dashed var(--gold); background: var(--gold-soft); border-radius: var(--radius);
+        padding: 16px 20px; margin-bottom: 20px;
+      }
+      .hint h3 { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 8px; }
+      @media (prefers-color-scheme: dark) { .hint h3 { color: var(--gold); } }
+      .hint ol { margin: 0; padding-left: 20px; color: var(--ink); }
+      .hint li { margin: 3px 0; }
+      .hint b { color: var(--ink); }
+
+      table.cases { width: 100%; border-collapse: collapse; }
+      table.cases th {
+        text-align: left; font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase;
+        color: var(--ink-3); padding: 12px 16px; border-bottom: 1px solid var(--line);
+      }
+      table.cases td { padding: 14px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+      table.cases tbody tr { cursor: pointer; }
+      table.cases tbody tr:hover { background: var(--field-bg); }
+      table.cases tbody tr:last-child td { border-bottom: 0; }
+      .vet-name { font-weight: 700; font-size: 15.5px; }
+      .vet-sub { font-size: 12.5px; color: var(--ink-2); }
+      .rating-big { font-family: Georgia, serif; font-size: 20px; font-weight: 700; }
+      .stage-pill {
+        display: inline-block; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+        background: var(--field-bg); border: 1px solid var(--line); color: var(--ink-2); white-space: nowrap;
+      }
+      .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+      .chip-ok { background: var(--good-bg); color: var(--good); }
+      .chip-warn { background: var(--warn-bg); color: var(--warn); }
+      .chip-bad { background: var(--bad-bg); color: var(--bad); }
+      .chip-none { background: var(--field-bg); color: var(--ink-3); border: 1px solid var(--line); }
+
+      /* ---------- Forms / fields ---------- */
+      .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+      .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px 18px; }
+      .field label { display: block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 5px; }
+      .field input, .field select, .field textarea {
+        width: 100%; background: var(--field-bg); border: 1px solid var(--line); border-radius: 8px;
+        padding: 10px 12px; min-height: 42px;
+      }
+      .field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--gold); outline-offset: 0; border-color: var(--gold); }
+      .field .full { grid-column: 1 / -1; }
+      .span2 { grid-column: span 2; }
+
+      /* ---------- Wizard ---------- */
+      .steps { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+      .step-dot {
+        display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
+        border: 1px solid var(--line); background: var(--card); font-size: 13px; font-weight: 700; color: var(--ink-2);
+      }
+      .step-dot .n { width: 22px; height: 22px; border-radius: 50%; background: var(--field-bg); border: 1px solid var(--line); display: grid; place-items: center; font-size: 12px; }
+      .step-dot.on { border-color: var(--gold); color: var(--ink); background: var(--gold-soft); }
+      .step-dot.on .n { background: var(--gold); border-color: var(--gold); color: #20180a; }
+      .step-dot.done .n { background: var(--good); border-color: var(--good); color: #fff; }
+      .wizard-nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+      .cond-row { display: grid; grid-template-columns: 1fr 130px 40px; gap: 10px; align-items: end; margin-bottom: 10px; }
+      .cond-row .rm { background: transparent; border: 1px solid var(--line); border-radius: 8px; height: 42px; color: var(--bad); font-size: 16px; }
+      .quick-add { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 16px; }
+      .quick-add button { background: var(--field-bg); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; min-height: 34px; }
+      .quick-add button:hover { border-color: var(--gold); }
+
+      /* ---------- Master record ---------- */
+      .golden-banner {
+        background: var(--navy); color: #e8edf5; border-radius: var(--radius); padding: 16px 20px;
+        display: flex; gap: 14px; align-items: center; margin-bottom: 18px; border-left: 5px solid var(--gold);
+      }
+      .golden-banner b { color: var(--gold); }
+      .golden-banner p { margin: 0; font-size: 14.5px; }
+      .save-state { font-size: 12.5px; font-weight: 700; color: var(--good); }
+      .section-title { font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-dark); margin: 22px 0 12px; font-weight: 800; }
+      @media (prefers-color-scheme: dark) { .section-title { color: var(--gold); } }
+      .section-title:first-child { margin-top: 0; }
+
+      /* ---------- Forms vault ---------- */
+      .form-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+      .form-tabs button {
+        background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 9px 13px;
+        font-weight: 700; font-size: 13.5px; color: var(--ink-2); min-height: 40px; text-align: left;
+      }
+      .form-tabs button small { display: block; font-weight: 600; font-size: 11px; color: var(--ink-3); }
+      .form-tabs button.active { border-color: var(--gold); color: var(--ink); background: var(--gold-soft); box-shadow: inset 0 -3px 0 var(--gold); }
+      .fill-counter {
+        display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: var(--navy); color: #fff;
+        border-radius: var(--radius); padding: 14px 18px; margin-bottom: 16px;
+      }
+      .fill-counter .big { font-family: Georgia, serif; font-size: 24px; color: var(--gold); font-weight: 700; }
+      .fill-counter p { margin: 0; font-size: 14px; }
+      .fill-counter .prestage { margin-left: auto; font-size: 12.5px; color: #b9c6da; max-width: 340px; }
+      .formdoc { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+      .formdoc-head { background: var(--navy); color: #fff; padding: 16px 22px; display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+      .formdoc-head .code { font-family: Georgia, serif; font-size: 19px; color: var(--gold); font-weight: 700; }
+      .formdoc-head .ttl { font-size: 14px; color: #c3cfe0; }
+      .formdoc-head .dept { margin-left: auto; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: #7788a3; }
+      .formdoc-body { padding: 18px 22px 22px; }
+      .fblock-title { font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); font-weight: 800; margin: 16px 0 8px; border-bottom: 1px solid var(--line); padding-bottom: 5px; }
+      .fblock-title:first-child { margin-top: 0; }
+      .frow { display: grid; grid-template-columns: 190px 1fr; gap: 6px 14px; padding: 6px 0; align-items: baseline; }
+      .frow .flabel { font-size: 12.5px; font-weight: 700; color: var(--ink-2); }
+      .fval {
+        font-size: 15px; padding: 5px 10px; border-radius: 6px; background: var(--gold-soft);
+        border: 1px solid var(--gold-line); display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      }
+      .fval.plain { background: transparent; border-color: transparent; padding-left: 0; }
+      .fval.manual { background: var(--field-bg); border: 1px dashed var(--line); color: var(--ink-2); font-style: italic; }
+      .src-tag { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; background: var(--gold); color: #20180a; border-radius: 4px; padding: 2px 6px; white-space: nowrap; }
+      .src-tag.manual { background: transparent; border: 1px solid var(--line); color: var(--ink-3); }
+      .flash { animation: flashAnim 2.2s ease-out; }
+      @keyframes flashAnim {
+        0% { background: var(--flash); box-shadow: 0 0 0 3px var(--gold); }
+        100% { background: var(--gold-soft); box-shadow: none; }
+      }
+      @media (prefers-reduced-motion: reduce) { .flash { animation: none; box-shadow: 0 0 0 2px var(--gold); } }
+      .upd-tag { font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--good); }
+
+      /* ---------- Analyzer / deadline ---------- */
+      .math-steps { font-size: 14.5px; }
+      .math-steps .mrow { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+      .math-steps .mrow:last-child { border-bottom: 0; }
+      .math-total { display: flex; align-items: baseline; gap: 14px; margin-top: 14px; background: var(--gold-soft); border: 1px solid var(--gold-line); border-radius: 8px; padding: 14px 16px; flex-wrap: wrap; }
+      .math-total .big { font-family: Georgia, serif; font-size: 30px; font-weight: 700; }
+      .flag { display: flex; gap: 12px; padding: 13px 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--line); background: var(--field-bg); }
+      .flag .dot { flex: 0 0 10px; width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; background: var(--gold); }
+      .flag.red .dot { background: var(--bad); }
+      .flag p { margin: 0; }
+      .flag b { display: block; margin-bottom: 2px; }
+      .flag span { color: var(--ink-2); font-size: 13.5px; }
+      .bar-track { height: 14px; background: var(--field-bg); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+      .bar-fill { height: 100%; background: var(--gold); transition: width .4s ease; }
+      .bar-fill.hot { background: var(--bad); }
+      .ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
+      .rung { border: 1px solid var(--line); border-radius: 8px; padding: 12px; text-align: center; background: var(--field-bg); }
+      .rung .d { font-family: Georgia, serif; font-size: 22px; font-weight: 700; }
+      .rung .s { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+      .rung.passed { opacity: .55; }
+      .rung.armed { border-color: var(--gold); background: var(--gold-soft); }
+      .rung.fired { border-color: var(--bad); background: var(--bad-bg); }
+      .case-picker { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .case-picker select { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; min-height: 42px; font-weight: 700; }
+      .empty-note { color: var(--ink-2); font-size: 14.5px; }
+      .kv { display: flex; justify-content: space-between; gap: 14px; padding: 7px 0; border-bottom: 1px dashed var(--line); }
+      .kv:last-child { border-bottom: 0; }
+      .kv b { text-align: right; }
+
+      /* ---------- Toast ---------- */
+      #toast {
+        position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(20px);
+        background: var(--navy); color: #fff; border: 1px solid var(--gold); border-radius: 10px;
+        padding: 13px 20px; font-size: 14.5px; font-weight: 600; opacity: 0; pointer-events: none;
+        transition: opacity .25s ease, transform .25s ease; z-index: 60; max-width: min(92vw, 560px); text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,.3);
+      }
+      #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+      /* ---------- Mobile ---------- */
+      .topbar { display: none; }
+      @media (max-width: 860px) {
+        .shell { flex-direction: column; }
+        .sidebar { width: 100%; flex: none; height: auto; position: static; }
+        .brand { padding: 14px 16px 10px; }
+        nav.main { flex-direction: row; overflow-x: visible; flex-wrap: wrap; padding: 10px; }
+        nav.main button { width: auto; flex: 1 1 40%; }
+        nav.main .nav-note { display: none; }
+        .side-foot { display: none; }
+        .demo-badge { margin: 10px 16px 0; }
+        .content { padding: 18px 14px 50px; }
+        .grid2, .grid3 { grid-template-columns: 1fr; }
+        .span2 { grid-column: auto; }
+        table.cases thead { display: none; }
+        table.cases, table.cases tbody, table.cases tr, table.cases td { display: block; width: 100%; }
+        table.cases td { border-bottom: 0; padding: 5px 16px; }
+        table.cases tbody tr { padding: 12px 0; border-bottom: 1px solid var(--line); }
+        .frow { grid-template-columns: 1fr; gap: 2px; }
+        .ladder { grid-template-columns: 1fr 1fr; }
+        .cond-row { grid-template-columns: 1fr 104px 40px; }
+      }
+    </style>
+  </head>
+  <body>
+<div style="position:relative;z-index:9999;background:#c9a227;color:#0d1420;font-family:Georgia,'Times New Roman',serif;text-align:center;padding:9px 14px;font-size:13px;letter-spacing:.14em;font-weight:bold;">LIVE DEMO &mdash; SAMPLE DATA ONLY <span style="font-weight:normal;letter-spacing:.02em;">&middot; Every name, record and document here is fictional</span> &middot; <a href="index.html" style="color:#0d1420;text-decoration:underline;">Demo home</a></div>
+
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="mark">
+            <div class="eagle" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <div>
+              <h1>LAW <span>4</span> WARRIORS</h1>
+              <div class="tag">Justice for our heroes</div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-badge">DEMO — SAMPLE DATA ONLY<small>Not a real system. All people are fictional.</small></div>
+        <nav class="main" id="mainNav" aria-label="Demo sections"></nav>
+        <div class="side-foot">
+          <button id="resetBtn" type="button">Reset demo</button>
+          In-browser demo only — nothing you type here is saved, sent, or stored. Reloading the page restores the original sample cases.
+        </div>
+      </aside>
+      <main class="content">
+        <div class="content-inner" id="app"></div>
+      </main>
+    </div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script>
+      "use strict";
+      /* ================= Utilities ================= */
+      const $ = (sel, el) => (el || document).querySelector(sel);
+      const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+      const DAY = 86400000;
+      function isoOf(d) { return d.toISOString().slice(0, 10); }
+      function daysFromToday(n) { const d = new Date(); d.setHours(12, 0, 0, 0); return isoOf(new Date(d.getTime() + n * DAY)); }
+      function fmtDate(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso + "T12:00:00");
+        return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      }
+      function addOneYear(iso) { const d = new Date(iso + "T12:00:00"); d.setFullYear(d.getFullYear() + 1); return isoOf(d); }
+      function daysUntil(iso) { if (!iso) return null; const now = new Date(); now.setHours(12, 0, 0, 0); return Math.round((new Date(iso + "T12:00:00") - now) / DAY); }
+      let toastTimer = null;
+      function toast(msg) {
+        const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+        clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 3400);
+      }
+
+      /* ================= VA combined-rating math =================
+         VA math: each rating disables a % of what remains "efficient".
+         Ratings apply largest-first; the exact result rounds to the nearest 10. */
+      function combinedMath(conditions) {
+        const sorted = conditions.filter(c => c.rating > 0).slice().sort((a, b) => b.rating - a.rating);
+        let efficiency = 100;
+        const steps = [];
+        sorted.forEach(c => {
+          const taken = efficiency * (c.rating / 100);
+          efficiency -= taken;
+          steps.push({ name: c.name, rating: c.rating, taken: taken, remaining: efficiency });
+        });
+        const exact = 100 - efficiency;
+        const rounded = Math.round(exact / 10) * 10;
+        return { steps, exact, rounded };
+      }
+
+      /* ================= Sample data (all fictional) ================= */
+      function sampleCases() {
+        return [
+          {
+            id: "case-delgado",
+            name: "Maria E. Delgado", dob: "1985-03-14", ssn4: "4417", vaFile: "C-27 441 902",
+            phone: "(619) 555-0143", email: "m.delgado.sample@example.com",
+            address: "482 Harbor Lights Dr, San Diego, CA 92113",
+            branch: "U.S. Marine Corps", serviceStart: "2003-06-02", serviceEnd: "2011-08-19",
+            rank: "Sergeant (E-5)", deployments: "Iraq (OIF) — 2004, 2006", discharge: "Honorable",
+            employment: "Part-time — reduced hours due to migraines",
+            conditions: [
+              { name: "Migraine headaches", rating: 30 },
+              { name: "Right knee limitation of flexion", rating: 30 },
+              { name: "Tinnitus", rating: 10 }
+            ],
+            stage: "Higher-Level Review", decisionDate: daysFromToday(-320)
+          },
+          {
+            id: "case-nguyen",
+            name: "Robert T. Nguyen", dob: "1978-11-02", ssn4: "9026", vaFile: "C-26 118 774",
+            phone: "(757) 555-0119", email: "r.nguyen.sample@example.com",
+            address: "17 Quarterdeck Ln, Norfolk, VA 23502",
+            branch: "U.S. Navy", serviceStart: "1996-09-10", serviceEnd: "2016-09-09",
+            rank: "Petty Officer First Class (E-6)", deployments: "Persian Gulf — 1998, 2003; Western Pacific — 2008",
+            discharge: "Honorable",
+            employment: "Employed full-time",
+            conditions: [
+              { name: "Bilateral hearing loss", rating: 20 },
+              { name: "Left shoulder strain", rating: 20 },
+              { name: "Tinnitus", rating: 10 }
+            ],
+            stage: "Claim Filed — 526EZ", decisionDate: daysFromToday(-60)
+          },
+          {
+            id: "case-whitfield",
+            name: "Thomas J. Whitfield", dob: "1969-05-27", ssn4: "3358", vaFile: "C-24 907 331",
+            phone: "(210) 555-0176", email: "t.whitfield.sample@example.com",
+            address: "2209 Alamo Heights Blvd, San Antonio, TX 78209",
+            branch: "U.S. Air Force", serviceStart: "1988-01-19", serviceEnd: "2008-02-01",
+            rank: "Master Sergeant (E-7)", deployments: "Saudi Arabia (Desert Storm) — 1991; Qatar — 2004",
+            discharge: "Honorable",
+            employment: "Not working — disabilities prevent full-time work",
+            conditions: [
+              { name: "PTSD", rating: 50 },
+              { name: "Sleep apnea", rating: 50 },
+              { name: "Tinnitus", rating: 10 }
+            ],
+            stage: "Evidence Gathering", decisionDate: null
+          }
+        ];
+      }
+      const SAMPLE_INTAKE = {
+        name: "James R. Calloway", dob: "1968-08-21", ssn4: "7712", vaFile: "C-25 630 418",
+        phone: "(912) 555-0168", email: "j.calloway.sample@example.com",
+        address: "814 Magnolia Bend Rd, Savannah, GA 31406",
+        branch: "U.S. Army", serviceStart: "1986-05-12", serviceEnd: "1994-03-31",
+        rank: "Staff Sergeant (E-6)", deployments: "Saudi Arabia / Kuwait (Desert Shield & Desert Storm) — 1990–91",
+        discharge: "Honorable",
+        employment: "Not working — disabilities prevent full-time work",
+        conditions: [
+          { name: "PTSD", rating: 50 },
+          { name: "Lumbar strain", rating: 20 },
+          { name: "Tinnitus", rating: 10 }
+        ]
+      };
+
+      /* ================= State ================= */
+      let uidCounter = 100;
+      const state = {
+        view: "dashboard",
+        cases: sampleCases(),
+        activeCaseId: "case-delgado",
+        formId: "526ez",
+        changedKeys: new Set(),
+        intake: null,       // { draft, step }
+        analyzerDate: "",
+        deadlineDate: ""
+      };
+      function activeCase() { return state.cases.find(c => c.id === state.activeCaseId) || state.cases[0]; }
+      function blankDraft() {
+        return { name: "", dob: "", ssn4: "", vaFile: "", phone: "", email: "", address: "",
+          branch: "U.S. Army", serviceStart: "", serviceEnd: "", rank: "", deployments: "", discharge: "Honorable",
+          employment: "Employed full-time", conditions: [{ name: "", rating: 0 }] };
+      }
+
+      /* ================= Navigation ================= */
+      const NAV = [
+        { id: "dashboard", label: "Cases Dashboard", icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>' },
+        { id: "intake", label: "New Intake", icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>' },
+        { id: "record", label: "Master Record", icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>' },
+        { id: "forms", label: "Forms Vault", icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/></svg>' },
+        { id: "analyzer", label: "Decision Analyzer", icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>' },
+        { id: "deadlines", label: "Deadline Tracker", icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>' }
+      ];
+      function renderNav() {
+        $("#mainNav").innerHTML = NAV.map(n =>
+          '<button type="button" data-nav="' + n.id + '" class="' + (state.view === n.id ? "active" : "") + '">' + n.icon + "<span>" + n.label + "</span></button>"
+        ).join("") + '<div class="nav-note">The Master Record is the single source of truth — every form reads from it.</div>';
+        document.querySelectorAll("[data-nav]").forEach(b => b.addEventListener("click", () => {
+          if (b.dataset.nav === "intake" && !state.intake) startIntake(false);
+          state.view = b.dataset.nav; render();
+        }));
+      }
+      function go(view) { state.view = view; render(); window.scrollTo({ top: 0 }); }
+
+      /* ================= Shared bits ================= */
+      function deadlineChip(c) {
+        if (!c.decisionDate) return '<span class="chip chip-none">No decision yet</span>';
+        const dl = addOneYear(c.decisionDate);
+        const left = daysUntil(dl);
+        if (left < 0) return '<span class="chip chip-bad">Deadline passed ' + Math.abs(left) + 'd ago</span>';
+        const cls = left <= 60 ? "chip-bad" : left <= 120 ? "chip-warn" : "chip-ok";
+        return '<span class="chip ' + cls + '">' + left + ' days left · ' + fmtDate(dl) + "</span>";
+      }
+      function casePicker() {
+        return '<div class="case-picker"><label for="caseSel" style="font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)">Active case</label>' +
+          '<select id="caseSel">' + state.cases.map(c =>
+            '<option value="' + c.id + '"' + (c.id === state.activeCaseId ? " selected" : "") + ">" + esc(c.name) + " — " + combinedMath(c.conditions).rounded + "%</option>"
+          ).join("") + "</select></div>";
+      }
+      function bindCasePicker() {
+        const sel = $("#caseSel");
+        if (sel) sel.addEventListener("change", () => { state.activeCaseId = sel.value; state.changedKeys.clear(); render(); });
+      }
+
+      /* ================= Dashboard ================= */
+      function viewDashboard() {
+        const rows = state.cases.map(c => {
+          const m = combinedMath(c.conditions);
+          return "<tr data-open-case=\"" + c.id + "\">" +
+            "<td><div class=\"vet-name\">" + esc(c.name) + "</div><div class=\"vet-sub\">VA File " + esc(c.vaFile) + "</div></td>" +
+            "<td>" + esc(c.branch) + "</td>" +
+            "<td><span class=\"rating-big\">" + m.rounded + "%</span><div class=\"vet-sub\">exact " + m.exact.toFixed(1) + "%</div></td>" +
+            "<td><span class=\"stage-pill\">" + esc(c.stage) + "</span></td>" +
+            "<td>" + deadlineChip(c) + "</td>" +
+            "<td style=\"text-align:right\"><span style=\"color:var(--gold-dark);font-weight:800\">Open →</span></td></tr>";
+        }).join("");
+        return `
+        <div class="view-head">
+          <div><h2>Cases Dashboard</h2><p>Every veteran has one Master Record. Intake fills it once — the Forms Vault, analyzer, and deadline tracker all read from it. Click any case to open it.</p></div>
+          <div class="spacer"></div>
+          <button class="btn btn-ghost" id="loadSampleBtn" type="button">Load sample veteran</button>
+          <button class="btn btn-gold" id="newIntakeBtn" type="button">+ New Intake</button>
+        </div>
+        <div class="hint">
+          <h3>How to try it — 2 minutes</h3>
+          <ol>
+            <li>Click <b>Load sample veteran</b> — the intake fills itself with a fictional Army veteran.</li>
+            <li>Review and <b>Save the Master Record</b>.</li>
+            <li>Open the <b>Forms Vault</b> — every VA form is already filled in. Note the counter: fields typed by staff: <b>zero</b>.</li>
+            <li>Go back to the <b>Master Record</b> and change the address (or a condition rating).</li>
+            <li>Return to the Forms Vault and <b>watch the new value appear on every form</b>, highlighted as just-updated.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <table class="cases">
+            <thead><tr><th>Veteran</th><th>Branch</th><th>Combined rating</th><th>Case stage</th><th>Next deadline</th><th></th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        <p style="margin-top:14px;color:var(--ink-3);font-size:13px">All names, file numbers, and details on this page are fictional sample data for demonstration.</p>`;
+      }
+      function bindDashboard() {
+        document.querySelectorAll("[data-open-case]").forEach(tr => tr.addEventListener("click", () => {
+          state.activeCaseId = tr.dataset.openCase; state.changedKeys.clear(); go("record");
+        }));
+        $("#newIntakeBtn").addEventListener("click", () => { startIntake(false); go("intake"); });
+        $("#loadSampleBtn").addEventListener("click", () => { startIntake(true); go("intake"); });
+      }
+
+      /* ================= Guided Intake ================= */
+      function startIntake(withSample) {
+        state.intake = { draft: withSample ? JSON.parse(JSON.stringify(SAMPLE_INTAKE)) : blankDraft(), step: withSample ? 4 : 1, sample: withSample };
+      }
+      const BRANCHES = ["U.S. Army", "U.S. Marine Corps", "U.S. Navy", "U.S. Air Force", "U.S. Coast Guard", "U.S. Space Force"];
+      const RATING_OPTIONS = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+      const QUICK_CONDITIONS = ["PTSD", "Tinnitus", "Lumbar strain", "Sleep apnea", "Knee limitation", "Hearing loss", "Migraine headaches", "Shoulder strain", "Scar", "Diabetes mellitus II"];
+      function ratingSelect(val) {
+        return RATING_OPTIONS.map(r => '<option value="' + r + '"' + (r === val ? " selected" : "") + ">" + r + "%</option>").join("");
+      }
+      function condRows(draft, prefix) {
+        return draft.conditions.map((c, i) => `
+          <div class="cond-row">
+            <div class="field"><label ${i === 0 ? "" : 'style="visibility:hidden"'}>Condition</label>
+              <input type="text" data-cond-name="${prefix}-${i}" value="${esc(c.name)}" placeholder="e.g., PTSD" /></div>
+            <div class="field"><label ${i === 0 ? "" : 'style="visibility:hidden"'}>Rating</label>
+              <select data-cond-rating="${prefix}-${i}">${ratingSelect(c.rating)}</select></div>
+            <button type="button" class="rm" data-cond-rm="${prefix}-${i}" aria-label="Remove condition" title="Remove condition">×</button>
+          </div>`).join("");
+      }
+      function bindCondRows(draft, prefix, rerender) {
+        document.querySelectorAll('[data-cond-name^="' + prefix + '-"]').forEach(inp => inp.addEventListener("input", () => {
+          draft.conditions[+inp.dataset.condName.split("-")[1]].name = inp.value;
+        }));
+        document.querySelectorAll('[data-cond-rating^="' + prefix + '-"]').forEach(sel => sel.addEventListener("change", () => {
+          draft.conditions[+sel.dataset.condRating.split("-")[1]].rating = +sel.value;
+        }));
+        document.querySelectorAll('[data-cond-rm^="' + prefix + '-"]').forEach(btn => btn.addEventListener("click", () => {
+          draft.conditions.splice(+btn.dataset.condRm.split("-")[1], 1);
+          if (!draft.conditions.length) draft.conditions.push({ name: "", rating: 0 });
+          rerender();
+        }));
+      }
+      function viewIntake() {
+        const it = state.intake, d = it.draft, step = it.step;
+        const stepsBar = ["Veteran Identity", "Service History", "Conditions & Rating", "Review & Save"].map((label, i) => {
+          const n = i + 1;
+          const cls = n === step ? "on" : n < step ? "done" : "";
+          return '<div class="step-dot ' + cls + '"><span class="n">' + (n < step ? "✓" : n) + "</span>" + label + "</div>";
+        }).join("");
+        let body = "";
+        if (step === 1) {
+          body = `<div class="grid2">
+            <div class="field span2"><label>Full name</label><input data-d="name" value="${esc(d.name)}" placeholder="e.g., James R. Calloway" /></div>
+            <div class="field"><label>Date of birth</label><input type="date" data-d="dob" value="${esc(d.dob)}" /></div>
+            <div class="field"><label>SSN (last 4 only)</label><input data-d="ssn4" maxlength="4" value="${esc(d.ssn4)}" placeholder="1234" /></div>
+            <div class="field"><label>VA file number</label><input data-d="vaFile" value="${esc(d.vaFile)}" placeholder="C-00 000 000" /></div>
+            <div class="field"><label>Phone</label><input data-d="phone" value="${esc(d.phone)}" placeholder="(555) 555-0100" /></div>
+            <div class="field span2"><label>Email</label><input type="email" data-d="email" value="${esc(d.email)}" placeholder="veteran@example.com" /></div>
+            <div class="field span2"><label>Mailing address</label><input data-d="address" value="${esc(d.address)}" placeholder="Street, City, State ZIP" /></div>
+          </div>
+          <p style="color:var(--ink-2);font-size:13.5px;margin-top:14px">This identity block is typed <b>once</b>. It will appear — untouched by staff hands — on the 526EZ, both appeal forms, the Board appeal, and the representation form.</p>`;
+        } else if (step === 2) {
+          body = `<div class="grid2">
+            <div class="field"><label>Branch of service</label><select data-d="branch">${BRANCHES.map(b => '<option' + (b === d.branch ? " selected" : "") + ">" + b + "</option>").join("")}</select></div>
+            <div class="field"><label>Discharge type</label><select data-d="discharge">${["Honorable", "General (Under Honorable)", "Other Than Honorable", "Medical"].map(x => '<option' + (x === d.discharge ? " selected" : "") + ">" + x + "</option>").join("")}</select></div>
+            <div class="field"><label>Service start</label><input type="date" data-d="serviceStart" value="${esc(d.serviceStart)}" /></div>
+            <div class="field"><label>Service end</label><input type="date" data-d="serviceEnd" value="${esc(d.serviceEnd)}" /></div>
+            <div class="field span2"><label>Rank at discharge</label><input data-d="rank" value="${esc(d.rank)}" placeholder="e.g., Staff Sergeant (E-6)" /></div>
+            <div class="field span2"><label>Deployments</label><input data-d="deployments" value="${esc(d.deployments)}" placeholder="e.g., Iraq (OIF) — 2004, 2006" /></div>
+          </div>`;
+        } else if (step === 3) {
+          const m = combinedMath(d.conditions);
+          body = `
+            <div class="field" style="margin-bottom:16px"><label>Current employment status</label>
+              <select data-d="employment">${["Employed full-time", "Part-time — reduced hours due to disabilities", "Not working — disabilities prevent full-time work", "Retired"].map(x => '<option' + (x === d.employment ? " selected" : "") + ">" + x + "</option>").join("")}</select></div>
+            <div class="section-title">Service-connected conditions</div>
+            <div class="quick-add">${QUICK_CONDITIONS.map(q => '<button type="button" data-quick="' + q + '">+ ' + q + "</button>").join("")}</div>
+            <div id="condHost">${condRows(d, "in")}</div>
+            <button class="btn btn-ghost btn-sm" type="button" id="addCondBtn">+ Add another condition</button>
+            <div class="math-total" style="margin-top:18px"><span>Combined rating (VA math, live):</span><span class="big">${m.rounded}%</span><span style="color:var(--ink-2)">exact ${m.exact.toFixed(1)}% before rounding — ratings combine against remaining efficiency, they don't add.</span></div>`;
+        } else {
+          const m = combinedMath(d.conditions);
+          const condList = d.conditions.filter(c => c.name.trim()).map(c => '<div class="kv"><span>' + esc(c.name) + "</span><b>" + c.rating + "%</b></div>").join("") || '<div class="kv"><span>No conditions entered</span><b>—</b></div>';
+          body = `
+            ${it.sample ? '<div class="hint" style="margin-bottom:16px"><h3>Sample veteran loaded</h3><p style="margin:0">This is the fictional <b>James R. Calloway</b> record, pre-filled so you can see the whole flow. Step back to edit anything, or save it now.</p></div>' : ""}
+            <div class="grid2">
+              <div>
+                <div class="section-title">Identity</div>
+                <div class="kv"><span>Full name</span><b>${esc(d.name) || "—"}</b></div>
+                <div class="kv"><span>Date of birth</span><b>${fmtDate(d.dob)}</b></div>
+                <div class="kv"><span>SSN (last 4)</span><b>•••-••-${esc(d.ssn4) || "————"}</b></div>
+                <div class="kv"><span>VA file number</span><b>${esc(d.vaFile) || "—"}</b></div>
+                <div class="kv"><span>Phone</span><b>${esc(d.phone) || "—"}</b></div>
+                <div class="kv"><span>Email</span><b>${esc(d.email) || "—"}</b></div>
+                <div class="kv"><span>Address</span><b>${esc(d.address) || "—"}</b></div>
+              </div>
+              <div>
+                <div class="section-title">Service</div>
+                <div class="kv"><span>Branch</span><b>${esc(d.branch)}</b></div>
+                <div class="kv"><span>Service</span><b>${fmtDate(d.serviceStart)} → ${fmtDate(d.serviceEnd)}</b></div>
+                <div class="kv"><span>Rank at discharge</span><b>${esc(d.rank) || "—"}</b></div>
+                <div class="kv"><span>Deployments</span><b>${esc(d.deployments) || "—"}</b></div>
+                <div class="kv"><span>Discharge</span><b>${esc(d.discharge)}</b></div>
+                <div class="section-title">Conditions — combined ${m.rounded}%</div>
+                ${condList}
+              </div>
+            </div>
+            <p style="color:var(--ink-2);margin-top:16px">Saving creates this veteran's <b>Master Record</b> — the one golden record every form, deadline, and analysis reads from. Nothing gets typed twice after this.</p>`;
+        }
+        return `
+        <div class="view-head"><div><h2>Guided Intake</h2><p>A paralegal-style interview: identity, service, conditions. Four short steps, entered once, used everywhere.</p></div>
+        <div class="spacer"></div><button class="btn btn-ghost" type="button" id="loadSampleBtn2">Load sample veteran</button></div>
+        <div class="steps">${stepsBar}</div>
+        <div class="card card-pad">${body}
+          <div class="wizard-nav">
+            <button class="btn btn-ghost" type="button" id="wizBack" ${step === 1 ? "disabled" : ""}>← Back</button>
+            ${step < 4
+              ? '<button class="btn btn-navy" type="button" id="wizNext">Continue →</button>'
+              : '<button class="btn btn-gold" type="button" id="wizSave">Save Master Record ✓</button>'}
+          </div>
+        </div>`;
+      }
+      function bindIntake() {
+        const it = state.intake, d = it.draft;
+        document.querySelectorAll("[data-d]").forEach(el => el.addEventListener("input", () => { d[el.dataset.d] = el.value; }));
+        document.querySelectorAll("[data-d]").forEach(el => el.addEventListener("change", () => { d[el.dataset.d] = el.value; }));
+        if (it.step === 3) {
+          bindCondRows(d, "in", render);
+          document.querySelectorAll('[data-cond-rating^="in-"]').forEach(sel => sel.addEventListener("change", render));
+          document.querySelectorAll("[data-quick]").forEach(b => b.addEventListener("click", () => {
+            if (!d.conditions.some(c => c.name.toLowerCase() === b.dataset.quick.toLowerCase())) {
+              const blank = d.conditions.findIndex(c => !c.name.trim());
+              if (blank >= 0) d.conditions[blank].name = b.dataset.quick; else d.conditions.push({ name: b.dataset.quick, rating: 10 });
+              render();
+            }
+          }));
+          $("#addCondBtn").addEventListener("click", () => { d.conditions.push({ name: "", rating: 0 }); render(); });
+        }
+        const back = $("#wizBack"), next = $("#wizNext"), save = $("#wizSave");
+        if (back) back.addEventListener("click", () => { it.step = Math.max(1, it.step - 1); render(); });
+        if (next) next.addEventListener("click", () => {
+          if (it.step === 1 && !d.name.trim()) { toast("Enter the veteran's name to continue — everything else can be fixed later in the Master Record."); return; }
+          it.step = Math.min(4, it.step + 1); render();
+        });
+        if (save) save.addEventListener("click", () => {
+          const rec = JSON.parse(JSON.stringify(d));
+          rec.id = "case-" + (++uidCounter);
+          rec.stage = "Intake Complete — Master Record Created";
+          rec.decisionDate = null;
+          rec.conditions = rec.conditions.filter(c => c.name.trim());
+          if (!rec.conditions.length) rec.conditions = [{ name: "No conditions recorded yet", rating: 0 }];
+          state.cases.unshift(rec);
+          state.activeCaseId = rec.id;
+          state.intake = null;
+          state.changedKeys.clear();
+          toast("Master Record saved for " + rec.name + ". Now open the Forms Vault — every form is already filled.");
+          go("record");
+        });
+        const ls = $("#loadSampleBtn2");
+        if (ls) ls.addEventListener("click", () => { startIntake(true); render(); toast("Sample veteran loaded — James R. Calloway, U.S. Army, Gulf War era (fictional)."); });
+      }
+
+      /* ================= Master Record ================= */
+      function viewRecord() {
+        const c = activeCase();
+        if (!c) return '<p class="empty-note">No cases yet — start a New Intake.</p>';
+        const m = combinedMath(c.conditions);
+        return `
+        <div class="view-head"><div><h2>Master Record</h2><p>The golden record for ${esc(c.name)}. This is the only place case data is ever typed.</p></div>
+        <div class="spacer"></div>${casePicker()}</div>
+        <div class="golden-banner">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c9a227" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 26px"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+          <p><b>Edit once here — every form updates instantly.</b> Change the address or a rating, then open the Forms Vault: the new value is already there, on all five forms, with zero re-typing. <span class="save-state" id="saveState"></span></p>
+        </div>
+        <div class="card card-pad">
+          <div class="section-title">Identity — appears verbatim on every form</div>
+          <div class="grid2">
+            <div class="field span2"><label>Full name</label><input data-m="name" value="${esc(c.name)}" /></div>
+            <div class="field"><label>Date of birth</label><input type="date" data-m="dob" value="${esc(c.dob)}" /></div>
+            <div class="field"><label>SSN (last 4 only)</label><input data-m="ssn4" maxlength="4" value="${esc(c.ssn4)}" /></div>
+            <div class="field"><label>VA file number</label><input data-m="vaFile" value="${esc(c.vaFile)}" /></div>
+            <div class="field"><label>Phone</label><input data-m="phone" value="${esc(c.phone)}" /></div>
+            <div class="field span2"><label>Email</label><input data-m="email" value="${esc(c.email)}" /></div>
+            <div class="field span2"><label>Mailing address</label><input data-m="address" value="${esc(c.address)}" /></div>
+          </div>
+          <div class="section-title">Service history</div>
+          <div class="grid2">
+            <div class="field"><label>Branch of service</label><select data-m="branch">${BRANCHES.map(b => '<option' + (b === c.branch ? " selected" : "") + ">" + b + "</option>").join("")}</select></div>
+            <div class="field"><label>Discharge type</label><select data-m="discharge">${["Honorable", "General (Under Honorable)", "Other Than Honorable", "Medical"].map(x => '<option' + (x === c.discharge ? " selected" : "") + ">" + x + "</option>").join("")}</select></div>
+            <div class="field"><label>Service start</label><input type="date" data-m="serviceStart" value="${esc(c.serviceStart)}" /></div>
+            <div class="field"><label>Service end</label><input type="date" data-m="serviceEnd" value="${esc(c.serviceEnd)}" /></div>
+            <div class="field span2"><label>Rank at discharge</label><input data-m="rank" value="${esc(c.rank)}" /></div>
+            <div class="field span2"><label>Deployments</label><input data-m="deployments" value="${esc(c.deployments)}" /></div>
+          </div>
+          <div class="section-title">Conditions, rating & work status</div>
+          <div class="field" style="margin-bottom:14px"><label>Employment status</label>
+            <select data-m="employment">${["Employed full-time", "Part-time — reduced hours due to disabilities", "Not working — disabilities prevent full-time work", "Retired"].map(x => '<option' + (x === c.employment ? " selected" : "") + ">" + x + "</option>").join("")}</select></div>
+          <div id="condHost">${condRows(c, "mr")}</div>
+          <button class="btn btn-ghost btn-sm" type="button" id="addCondBtn2">+ Add condition</button>
+          <div class="math-total" style="margin-top:18px"><span>Combined rating (VA math):</span><span class="big" id="mrCombined">${m.rounded}%</span><span style="color:var(--ink-2)">exact ${m.exact.toFixed(1)}% — updates live as you edit, and flows to every form.</span></div>
+          <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-gold" type="button" id="toFormsBtn">See it in the Forms Vault →</button>
+            <button class="btn btn-ghost" type="button" id="toAnalyzerBtn">Run Decision Analyzer</button>
+          </div>
+        </div>`;
+      }
+      function bindRecord() {
+        const c = activeCase();
+        if (!c) return;
+        bindCasePicker();
+        const noteSaved = (key) => {
+          state.changedKeys.add(key);
+          const s = $("#saveState");
+          if (s) s.textContent = " · Saved — Forms Vault updated";
+        };
+        document.querySelectorAll("[data-m]").forEach(el => {
+          el.addEventListener("input", () => { c[el.dataset.m] = el.value; noteSaved(el.dataset.m); });
+          el.addEventListener("change", () => { c[el.dataset.m] = el.value; noteSaved(el.dataset.m); });
+        });
+        /* condition edits need a light re-render of just the combined number */
+        document.querySelectorAll('[data-cond-name^="mr-"], [data-cond-rating^="mr-"]').forEach(el => {
+          el.addEventListener("change", () => {
+            state.changedKeys.add("conditions");
+            const m = combinedMath(c.conditions);
+            const host = $("#mrCombined");
+            if (host) host.textContent = m.rounded + "%";
+            const s = $("#saveState"); if (s) s.textContent = " · Saved — Forms Vault updated";
+          });
+        });
+        bindCondRows(c, "mr", render);
+        const add = $("#addCondBtn2");
+        if (add) add.addEventListener("click", () => { c.conditions.push({ name: "", rating: 0 }); state.changedKeys.add("conditions"); render(); });
+        $("#toFormsBtn").addEventListener("click", () => go("forms"));
+        $("#toAnalyzerBtn").addEventListener("click", () => go("analyzer"));
+      }
+
+      /* ================= Forms Vault ================= */
+      const FORMS = [
+        { id: "526ez", code: "VA Form 21-526EZ", short: "526EZ — Claim", title: "Application for Disability Compensation and Related Compensation Benefits", appeal: false },
+        { id: "0995", code: "VA Form 20-0995", short: "20-0995 — Supplemental", title: "Supplemental Claim", appeal: true },
+        { id: "0996", code: "VA Form 20-0996", short: "20-0996 — Higher-Level Review", title: "Request for Higher-Level Review", appeal: true },
+        { id: "10182", code: "VA Form 10182", short: "10182 — Board Appeal", title: "Notice of Disagreement — Board of Veterans' Appeals", appeal: true },
+        { id: "22a", code: "VA Form 21-22a", short: "21-22a — Representation", title: "Appointment of Individual as Claimant's Representative", appeal: false }
+      ];
+      function identityRows(c) {
+        return [
+          { label: "Veteran's full name", value: c.name, key: "name" },
+          { label: "Date of birth", value: fmtDate(c.dob), key: "dob" },
+          { label: "SSN (last 4)", value: "•••-••-" + c.ssn4, key: "ssn4" },
+          { label: "VA file number", value: c.vaFile, key: "vaFile" },
+          { label: "Mailing address", value: c.address, key: "address" },
+          { label: "Telephone", value: c.phone, key: "phone" },
+          { label: "Email address", value: c.email, key: "email" }
+        ];
+      }
+      function serviceRows(c) {
+        return [
+          { label: "Branch of service", value: c.branch, key: "branch" },
+          { label: "Active service", value: fmtDate(c.serviceStart) + " → " + fmtDate(c.serviceEnd), key: "serviceStart" },
+          { label: "Rank at discharge", value: c.rank, key: "rank" },
+          { label: "Deployments", value: c.deployments, key: "deployments" },
+          { label: "Character of discharge", value: c.discharge, key: "discharge" }
+        ];
+      }
+      function conditionRowsBlock(c) {
+        return c.conditions.filter(x => x.name.trim()).map(x => ({
+          label: "Condition", value: x.name + " — rated " + x.rating + "%", key: "conditions"
+        }));
+      }
+      function formFields(c, formId) {
+        const decDate = c.decisionDate ? fmtDate(c.decisionDate) : "Per decision letter on file";
+        const decDeadline = c.decisionDate ? fmtDate(addOneYear(c.decisionDate)) : "—";
+        if (formId === "526ez") return [
+          { block: "Section I — Veteran Identification", rows: identityRows(c) },
+          { block: "Section II — Service Information", rows: serviceRows(c) },
+          { block: "Section III — Disabilities Claimed", rows: conditionRowsBlock(c).concat([
+            { label: "Employment status", value: c.employment, key: "employment" },
+            { label: "Claim type", value: "Compensation — new and increased ratings", fixed: true }
+          ]) },
+          { block: "Section IV — Declaration", rows: [
+            { label: "Veteran signature", manual: "Signed electronically at filing — staff never types identity data" },
+            { label: "Date signed", manual: "Stamped at filing" }
+          ] }
+        ];
+        if (formId === "0995") return [
+          { block: "Part I — Claimant Identification", rows: identityRows(c) },
+          { block: "Part II — Issue(s) for Supplemental Review", rows: conditionRowsBlock(c).concat([
+            { label: "Decision being appealed", value: "Rating decision dated " + decDate, key: "decision" },
+            { label: "New & relevant evidence", manual: "Staff attaches evidence packet — the only typing on this form" }
+          ]) },
+          { block: "Part III — Certification", rows: [
+            { label: "Appeal window closes", value: decDeadline + " (1 year from decision)", key: "decision" },
+            { label: "Signature", manual: "Signed electronically at filing" }
+          ] }
+        ];
+        if (formId === "0996") return [
+          { block: "Part I — Claimant Identification", rows: identityRows(c) },
+          { block: "Part II — Issue(s) for Higher-Level Review", rows: conditionRowsBlock(c).concat([
+            { label: "Decision being appealed", value: "Rating decision dated " + decDate, key: "decision" },
+            { label: "Basis for review", value: "Clear and unmistakable error / duty-to-assist error — per decision analysis", fixed: true },
+            { label: "Informal conference", value: "Requested — representative of record", fixed: true }
+          ]) },
+          { block: "Part III — Certification", rows: [
+            { label: "Appeal window closes", value: decDeadline + " (1 year from decision)", key: "decision" },
+            { label: "Signature", manual: "Signed electronically at filing" }
+          ] }
+        ];
+        if (formId === "10182") return [
+          { block: "Part I — Appellant Identification", rows: identityRows(c) },
+          { block: "Part II — Board Review Lane", rows: [
+            { label: "Docket lane", value: "Evidence Submission — 90-day evidence window", fixed: true },
+            { label: "Decision being appealed", value: "Rating decision dated " + decDate, key: "decision" }
+          ] },
+          { block: "Part III — Specific Issues on Appeal", rows: conditionRowsBlock(c) },
+          { block: "Part IV — Certification", rows: [
+            { label: "Appeal window closes", value: decDeadline + " (1 year from decision)", key: "decision" },
+            { label: "Signature", manual: "Signed electronically at filing" }
+          ] }
+        ];
+        /* 21-22a */
+        return [
+          { block: "Part I — Veteran / Claimant Information", rows: identityRows(c) },
+          { block: "Part II — Service Information", rows: serviceRows(c).slice(0, 2) },
+          { block: "Part III — Appointment", rows: [
+            { label: "Representative appointed", value: "Law 4 Warriors — VA-accredited representative (demo firm)", fixed: true },
+            { label: "Scope", value: "Representation for all VA disability claims and appeals", fixed: true },
+            { label: "Access to records", value: "Authorized — VBMS / VA records access granted", fixed: true }
+          ] },
+          { block: "Part IV — Signatures", rows: [
+            { label: "Veteran signature", manual: "Signed at intake — scanned copy on file" },
+            { label: "Representative signature", manual: "Signed at intake" }
+          ] }
+        ];
+      }
+      function viewForms() {
+        const c = activeCase();
+        if (!c) return '<p class="empty-note">No cases yet — start a New Intake.</p>';
+        const form = FORMS.find(f => f.id === state.formId);
+        const blocks = formFields(c, form.id);
+        let auto = 0, total = 0, typed = 0;
+        blocks.forEach(b => b.rows.forEach(r => {
+          total++;
+          if (r.manual) { /* staff action, not typing from scratch */ }
+          else if (r.value && String(r.value).trim()) auto++;
+        }));
+        const bodyHtml = blocks.map(b => `
+          <div class="fblock-title">${esc(b.block)}</div>
+          ${b.rows.map(r => {
+            if (r.manual) return `<div class="frow"><div class="flabel">${esc(r.label)}</div><div><span class="fval manual">${esc(r.manual)} <span class="src-tag manual">Staff action</span></span></div></div>`;
+            const changed = r.key && state.changedKeys.has(r.key);
+            return `<div class="frow"><div class="flabel">${esc(r.label)}</div><div><span class="fval ${changed ? "flash" : ""}">${esc(r.value)} ${r.key ? '<span class="src-tag">Master Record</span>' : '<span class="src-tag">System</span>'} ${changed ? '<span class="upd-tag">Just updated</span>' : ""}</span></div></div>`;
+          }).join("")}`).join("");
+        return `
+        <div class="view-head"><div><h2>Forms Vault</h2><p>Five VA forms, one source of truth. Gold-highlighted values were pulled from the Master Record — nobody typed them here.</p></div>
+        <div class="spacer"></div>${casePicker()}</div>
+        <div class="fill-counter">
+          <span class="big">${auto} of ${total}</span>
+          <p>fields on this form auto-filled from the Master Record.<br/>Fields typed by staff on this form: <b style="color:var(--gold)">${typed}</b>.</p>
+          <p class="prestage"><b style="color:#fff">Pre-staged appeal packet:</b> filing the 21-526EZ pre-generates the 20-0995, 20-0996, and 10182 at ~90% filled from this same record — if a denial lands, the appeal is already drafted.</p>
+        </div>
+        <div class="form-tabs">${FORMS.map(f =>
+          '<button type="button" data-form="' + f.id + '" class="' + (f.id === form.id ? "active" : "") + '">' + esc(f.short) +
+          (f.appeal ? "<small>Pre-staged · ~90% filled</small>" : "<small>From Master Record</small>") + "</button>"
+        ).join("")}</div>
+        <div class="formdoc">
+          <div class="formdoc-head"><span class="code">${esc(form.code)}</span><span class="ttl">${esc(form.title)}</span><span class="dept">Department of Veterans Affairs</span></div>
+          <div class="formdoc-body">${bodyHtml}
+            <p style="margin:18px 0 0;color:var(--ink-3);font-size:12.5px">Demo rendering in the style of the official form — not an official VA document. Values shown come only from this case's Master Record.</p>
+          </div>
+        </div>
+        ${state.changedKeys.size ? '<p style="margin-top:14px"><button class="btn btn-ghost btn-sm" type="button" id="clearFlashBtn">Clear “just updated” highlights</button></p>' : ""}`;
+      }
+      function bindForms() {
+        bindCasePicker();
+        document.querySelectorAll("[data-form]").forEach(b => b.addEventListener("click", () => { state.formId = b.dataset.form; render(); }));
+        const cf = $("#clearFlashBtn");
+        if (cf) cf.addEventListener("click", () => { state.changedKeys.clear(); render(); });
+      }
+
+      /* ================= Decision Analyzer ================= */
+      function analyzerFlags(c) {
+        const flags = [];
+        const m = combinedMath(c.conditions);
+        const names = c.conditions.map(x => x.name.toLowerCase());
+        const has = (s) => names.some(n => n.includes(s));
+        const topSingle = Math.max.apply(null, c.conditions.map(x => x.rating).concat([0]));
+        const notWorking = /not working/i.test(c.employment || "");
+        const reduced = /part-time|reduced/i.test(c.employment || "");
+        if (has("ptsd") && (notWorking || reduced || topSingle >= 50)) {
+          flags.push({ red: notWorking, title: "Evaluate TDIU — total disability based on individual unemployability",
+            body: "PTSD rated " + (c.conditions.find(x => /ptsd/i.test(x.name)) || {}).rating + "% with work capacity affected (" + c.employment + "). Sample logic: if service-connected conditions prevent substantially gainful employment, TDIU pays at the 100% rate even below a 100% schedular rating." });
+        }
+        if (c.serviceEnd && (new Date() - new Date(c.serviceEnd + "T12:00:00")) / (365.25 * DAY) >= 5) {
+          flags.push({ title: "Check rating protection — ratings held 5+ years",
+            body: "Service ended " + fmtDate(c.serviceEnd) + ". Sample logic: under the 5-year rule (38 CFR 3.344), a rating held five years generally can't be reduced on a single exam — verify no reduction risk before filing for increases." });
+        }
+        if (has("ptsd") && !has("sleep apnea")) {
+          flags.push({ title: "Screen for sleep apnea secondary to PTSD",
+            body: "PTSD is on the record with no sleep-apnea claim. Sample logic: ask about witnessed apneas / sleep studies — secondary service connection is a common missed opportunity on PTSD files." });
+        }
+        if (has("tinnitus") && !has("hearing")) {
+          flags.push({ title: "Check hearing loss claim alongside tinnitus",
+            body: "Tinnitus is claimed without a hearing-loss rating. Sample logic: confirm an audiology exam is in the evidence packet — the two are frequently rated together." });
+        }
+        if (m.rounded >= 60 && topSingle >= 40) {
+          flags.push({ title: "Housebound / SMC screening",
+            body: "Combined " + m.rounded + "% with a single condition at " + topSingle + "%. Sample logic: screen for special monthly compensation eligibility if one condition reaches 100% or the veteran is substantially confined." });
+        }
+        if (!flags.length) flags.push({ title: "No sample flags triggered", body: "Add conditions or change the employment status in the Master Record and re-run — the flags read the live record." });
+        return flags;
+      }
+      function viewAnalyzer() {
+        const c = activeCase();
+        if (!c) return '<p class="empty-note">No cases yet — start a New Intake.</p>';
+        const m = combinedMath(c.conditions);
+        const stepsHtml = m.steps.length ? m.steps.map((s, i) =>
+          '<div class="mrow"><span><b>' + esc(s.name) + "</b> — " + s.rating + "% of the remaining " +
+          (i === 0 ? "100" : m.steps[i - 1].remaining.toFixed(1)) + "% efficiency</span><b>−" + s.taken.toFixed(1) + " → " + s.remaining.toFixed(1) + "% left</b></div>"
+        ).join("") : '<p class="empty-note">No rated conditions on this record yet.</p>';
+        const flags = analyzerFlags(c);
+        const decNote = state.analyzerDate
+          ? (() => { const dl = addOneYear(state.analyzerDate); const left = daysUntil(dl);
+              return '<div class="kv"><span>Decision date entered</span><b>' + fmtDate(state.analyzerDate) + '</b></div>' +
+                     '<div class="kv"><span>1-year appeal deadline</span><b>' + fmtDate(dl) + (left != null ? " (" + left + " days left)" : "") + '</b></div>' +
+                     '<p style="margin:10px 0 0"><button class="btn btn-ghost btn-sm" type="button" id="sendToDeadlines">Track this deadline →</button></p>'; })()
+          : "";
+        return `
+        <div class="view-head"><div><h2>Decision Analyzer</h2><p>Reads the live Master Record. Sample logic for demonstration — a lawyer reviews every flag before anything is filed.</p></div>
+        <div class="spacer"></div>${casePicker()}</div>
+        <div class="grid2" style="align-items:start">
+          <div class="card card-pad">
+            <div class="section-title">Combined-rating math — VA style, not addition</div>
+            <div class="math-steps">${stepsHtml}</div>
+            <div class="math-total"><span>Exact combined:</span><span class="big">${m.exact.toFixed(1)}%</span><span>→ rounds to</span><span class="big">${m.rounded}%</span></div>
+            <p style="color:var(--ink-2);font-size:13.5px;margin-top:12px">Why it matters: ${esc(c.name.split(" ")[0])}'s ratings look like they should total ${c.conditions.reduce((a, x) => a + x.rating, 0)}% if you just add them. VA math combines each rating against what's left — the gap is real money, and clients rarely understand it until they see this table.</p>
+            <div class="field" style="margin-top:16px"><label>Decision date (from the VA letter)</label>
+              <input type="date" id="analyzerDate" value="${esc(state.analyzerDate)}" /></div>
+            <div style="margin-top:10px">${decNote}</div>
+          </div>
+          <div class="card card-pad">
+            <div class="section-title">Flags from this record</div>
+            ${flags.map(f => '<div class="flag' + (f.red ? " red" : "") + '"><span class="dot"></span><p><b>' + esc(f.title) + "</b><span>" + esc(f.body) + "</span></p></div>").join("")}
+            <p style="color:var(--ink-3);font-size:12.5px;margin:6px 0 0">Flags regenerate instantly when the Master Record changes — try editing a rating or the employment status, then come back.</p>
+          </div>
+        </div>`;
+      }
+      function bindAnalyzer() {
+        bindCasePicker();
+        const d = $("#analyzerDate");
+        if (d) d.addEventListener("change", () => { state.analyzerDate = d.value; render(); });
+        const s = $("#sendToDeadlines");
+        if (s) s.addEventListener("click", () => { state.deadlineDate = state.analyzerDate; go("deadlines"); });
+      }
+
+      /* ================= Deadline Tracker ================= */
+      function viewDeadlines() {
+        const c = activeCase();
+        const dateVal = state.deadlineDate || (c && c.decisionDate) || "";
+        let panel = '<p class="empty-note">Enter a VA decision date to see the appeal deadline, the time left, and the alarm ladder the system would run.</p>';
+        if (dateVal) {
+          const dl = addOneYear(dateVal);
+          const left = daysUntil(dl);
+          const total = Math.round((new Date(dl + "T12:00:00") - new Date(dateVal + "T12:00:00")) / DAY);
+          const elapsed = Math.max(0, total - Math.max(0, left));
+          const pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
+          const urgent = left <= 60;
+          const overdue = left < 0;
+          const rung = (days) => {
+            if (left < 0) return { cls: "passed", s: "Window closed" };
+            if (left <= days) return { cls: "fired", s: "ALARM FIRED" };
+            if (left <= days + 45) return { cls: "armed", s: "Armed — next up" };
+            return { cls: "", s: "Scheduled" };
+          };
+          panel = `
+            <div class="kv"><span>Decision date</span><b>${fmtDate(dateVal)}</b></div>
+            <div class="kv"><span>Appeal deadline (decision + 1 year)</span><b>${fmtDate(dl)}</b></div>
+            <div class="kv"><span>Time remaining</span><b style="color:${overdue || urgent ? "var(--bad)" : "var(--good)"}">${overdue ? "OVERDUE by " + Math.abs(left) + " days" : left + " days"}</b></div>
+            ${(urgent && !overdue) ? '<div class="flag red" style="margin-top:14px"><span class="dot"></span><p><b>URGENT — inside 60 days</b><span>The appeal packet for this case is already ~90% pre-staged in the Forms Vault from the Master Record. Review, sign, file — no scramble.</span></p></div>' : ""}
+            ${overdue ? '<div class="flag red" style="margin-top:14px"><span class="dot"></span><p><b>Window closed on this sample date</b><span>In the real system this case would escalate to the attorney of record and a late-filing / CUE review would open automatically.</span></p></div>' : ""}
+            <div style="margin-top:18px">
+              <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--ink-2);margin-bottom:6px"><span>Decision issued</span><span>${Math.round(pct)}% of the year used</span><span>Deadline</span></div>
+              <div class="bar-track"><div class="bar-fill ${urgent || overdue ? "hot" : ""}" style="width:${pct}%"></div></div>
+            </div>
+            <div class="section-title" style="margin-top:22px">Alarm ladder — automatic, no one watches a calendar</div>
+            <div class="ladder">${[90, 60, 30, 7].map(n => { const r = rung(n); return '<div class="rung ' + r.cls + '"><div class="d">' + n + 'd</div><div class="s">' + r.s + '</div><div style="font-size:12px;color:var(--ink-2);margin-top:4px">' + (n === 90 ? "Packet check + staff task" : n === 60 ? "Attorney review ping" : n === 30 ? "Client text + call" : "Daily escalation") + "</div></div>"; }).join("")}</div>`;
+        }
+        return `
+        <div class="view-head"><div><h2>Deadline Tracker</h2><p>One missed one-year window can cost a veteran thousands in back pay. The tracker runs off the decision date and the Master Record — not a paralegal's memory.</p></div>
+        <div class="spacer"></div>${casePicker()}</div>
+        <div class="card card-pad">
+          <div class="field" style="max-width:340px"><label>VA decision date</label>
+            <input type="date" id="deadlineDate" value="${esc(dateVal)}" /></div>
+          <div style="margin-top:18px">${panel}</div>
+        </div>`;
+      }
+      function bindDeadlines() {
+        bindCasePicker();
+        const d = $("#deadlineDate");
+        if (d) d.addEventListener("change", () => { state.deadlineDate = d.value; render(); });
+      }
+
+      /* ================= Render root ================= */
+      const VIEWS = {
+        dashboard: [viewDashboard, bindDashboard],
+        intake: [viewIntake, bindIntake],
+        record: [viewRecord, bindRecord],
+        forms: [viewForms, bindForms],
+        analyzer: [viewAnalyzer, bindAnalyzer],
+        deadlines: [viewDeadlines, bindDeadlines]
+      };
+      function render() {
+        renderNav();
+        if (state.view === "intake" && !state.intake) startIntake(false);
+        const pair = VIEWS[state.view] || VIEWS.dashboard;
+        $("#app").innerHTML = pair[0]();
+        pair[1]();
+      }
+      $("#resetBtn").addEventListener("click", () => {
+        state.cases = sampleCases();
+        state.activeCaseId = "case-delgado";
+        state.formId = "526ez";
+        state.changedKeys.clear();
+        state.intake = null;
+        state.analyzerDate = "";
+        state.deadlineDate = "";
+        go("dashboard");
+        toast("Demo reset — the original three sample cases are back.");
+      });
+      render();
+    </script>
+  </body>
+</html>

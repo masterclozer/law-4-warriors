@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connect Adobe — Law 4 Warriors Admin</title>
+<style>
+  :root{
+    --bg:#0d1420; --card:#16202f; --card-edge:#24334d; --field-bg:#1c293e;
+    --navy-panel:#1a2c4a; --ink:#e8edf5; --muted:#7788a3; --faint:#c3cfe0;
+    --gold:#c9a227; --gold-dark:#a8861c; --gold-soft:#3a3112;
+    --good:#2ea36b; --good-bg:#14301f; --bad:#e05a4e; --bad-bg:#3d1a17;
+    --amber:#d9a72e; --amber-bg:#38300f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.55;padding:32px 16px 64px}
+  .wrap{max-width:860px;margin:0 auto}
+  .preview-tag{position:fixed;top:14px;right:14px;z-index:10;
+    border:1px solid var(--gold);color:var(--gold);background:rgba(13,20,32,.92);
+    font-size:11px;letter-spacing:.14em;padding:6px 10px;border-radius:3px}
+  .brand{font-family:Georgia,"Times New Roman",serif;letter-spacing:.28em;
+    color:var(--gold);font-size:13px;text-transform:uppercase}
+  h1{font-family:Georgia,"Times New Roman",serif;font-weight:600;
+    font-size:32px;margin:6px 0 4px;color:#fff}
+  .rule{height:2px;background:linear-gradient(90deg,var(--gold),transparent);
+    margin:14px 0 22px}
+  .lede{color:var(--faint);max-width:66ch}
+  .card{background:var(--card);border:1px solid var(--card-edge);
+    border-radius:8px;padding:22px 24px;margin:18px 0;position:relative}
+  .card h2{font-family:Georgia,"Times New Roman",serif;font-weight:600;
+    font-size:20px;margin:0 0 6px;color:#fff}
+  .card h2 .step{color:var(--gold);margin-right:8px}
+  .card p{color:var(--faint);margin:6px 0}
+  .card p.small,.small{font-size:13px;color:var(--muted)}
+  ol.steps{margin:10px 0 4px;padding-left:22px;color:var(--faint)}
+  ol.steps li{margin:7px 0}
+  ol.steps b{color:var(--ink)}
+  code{background:var(--field-bg);border:1px solid var(--card-edge);
+    padding:1px 6px;border-radius:4px;font-size:13px;color:#ffe9a8}
+  label{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin:16px 0 6px}
+  input[type=text],input[type=password]{width:100%;background:var(--field-bg);
+    border:1px solid var(--card-edge);border-radius:5px;color:var(--ink);
+    padding:11px 12px;font-size:15px;font-family:Consolas,Menlo,monospace}
+  input:focus{outline:2px solid var(--gold-dark);outline-offset:0;border-color:var(--gold)}
+  input[disabled]{opacity:.45;cursor:not-allowed}
+  .btnrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+  button{border-radius:5px;padding:11px 20px;font-size:15px;cursor:pointer;
+    font-family:inherit}
+  .btn-gold{background:var(--gold);border:1px solid var(--gold);color:#20180a;
+    font-weight:600}
+  .btn-gold:hover{background:var(--gold-dark);border-color:var(--gold-dark);color:#fff}
+  .btn-ghost{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+  .btn-ghost:hover{background:var(--gold-soft)}
+  button[disabled]{opacity:.45;cursor:not-allowed}
+  .notice{display:none;margin-top:16px;border:1px solid var(--gold-line,#6d5c1e);
+    background:var(--gold-soft);color:#ffe9a8;border-radius:5px;padding:10px 14px;
+    font-size:14px}
+  /* status panel */
+  .status-row{display:flex;gap:12px;align-items:flex-start;padding:11px 12px;
+    border:1px solid var(--card-edge);border-radius:6px;margin:9px 0;
+    background:var(--navy-panel)}
+  .dot{flex:0 0 auto;width:12px;height:12px;border-radius:50%;margin-top:5px}
+  .dot.grey{background:#8a97ab}.dot.amber{background:var(--amber)}
+  .dot.green{background:var(--good)}.dot.red{background:var(--bad)}
+  .status-row .name{font-weight:600;color:#fff}
+  .status-row .desc{font-size:13px;color:var(--faint)}
+  .status-row .tag{margin-left:auto;flex:0 0 auto;font-size:11px;
+    letter-spacing:.1em;padding:3px 8px;border-radius:3px;
+    border:1px solid var(--gold);color:var(--gold)}
+  .status-row.sample{opacity:.75}
+  /* sign panel */
+  .card.disabled-card{opacity:.72}
+  .stage2{position:absolute;top:16px;right:16px;font-size:11px;letter-spacing:.12em;
+    border:1px solid var(--muted);color:var(--faint);padding:4px 9px;border-radius:3px}
+  .foot{color:var(--muted);font-size:13px;margin-top:26px;max-width:70ch}
+  a{color:var(--gold)}
+</style>
+</head>
+<body>
+<div style="position:relative;z-index:9999;background:#c9a227;color:#0d1420;font-family:Georgia,'Times New Roman',serif;text-align:center;padding:9px 14px;font-size:13px;letter-spacing:.14em;font-weight:bold;">LIVE DEMO &mdash; SAMPLE DATA ONLY <span style="font-weight:normal;letter-spacing:.02em;">&middot; Every name, record and document here is fictional</span> &middot; <a href="index.html" style="color:#0d1420;text-decoration:underline;">Demo home</a></div>
+
+<div class="preview-tag">SETUP SCREEN — PREVIEW</div>
+<div class="wrap">
+
+  <div class="brand">Law 4 Warriors</div>
+  <h1>Connect Adobe</h1>
+  <div class="rule"></div>
+  <p class="lede">
+    This system reads VA rating decision letters with <b>Adobe Acrobat
+    Services</b> (PDF Extract). It ships with no Adobe account attached —
+    the firm connects <b>its own</b> Adobe account here, once. The
+    credentials are encrypted on this server and are used only to sign in
+    to Adobe on the firm's behalf. They are never sent anywhere else.
+  </p>
+
+  <!-- ======================= STATUS ======================= -->
+  <div class="card">
+    <h2>Connection status</h2>
+    <p class="small">What each state means — the live system shows one of
+      these at a time. (On this preview, “Not configured” is the current
+      sample state; the rest are shown so you can recognize them later.)</p>
+
+    <div class="status-row">
+      <span class="dot grey"></span>
+      <div><span class="name">Not configured</span><br>
+        <span class="desc">No Adobe credentials saved yet. The system
+          cannot call Adobe until Step 1 and Step 2 below are done.</span></div>
+      <span class="tag">CURRENT — SAMPLE</span>
+    </div>
+    <div class="status-row sample">
+      <span class="dot amber"></span>
+      <div><span class="name">Configured — untested</span><br>
+        <span class="desc">Credentials are saved, but no successful test
+          yet. Click <i>Test connection</i> to verify them against
+          Adobe.</span></div>
+    </div>
+    <div class="status-row sample">
+      <span class="dot green"></span>
+      <div><span class="name">Connected</span><br>
+        <span class="desc">Adobe accepted the credentials and issued an
+          access token. Decision letters can be processed. Tokens last
+          24 hours and refresh automatically.</span></div>
+    </div>
+    <div class="status-row sample">
+      <span class="dot red"></span>
+      <div><span class="name">Authentication failed</span><br>
+        <span class="desc">Adobe rejected the credentials — usually a
+          typo, a revoked secret, or a credential created in a project
+          without the Acrobat Services API. Re-check and test again.</span></div>
+    </div>
+  </div>
+
+  <!-- ======================= STEP 1 ======================= -->
+  <div class="card">
+    <h2><span class="step">Step 1</span>Get your credentials from Adobe</h2>
+    <p>You create these once, in the firm's own Adobe account. It takes
+      about five minutes and costs nothing.</p>
+    <ol class="steps">
+      <li><b>Create an Adobe ID</b> with a firm email address (or sign in
+        if the firm already has one).</li>
+      <li>Go to <b>developer.adobe.com/console</b> and click
+        <b>Create new project</b> — name it “Law 4 Warriors”.</li>
+      <li>In the project, click <b>Add API</b> and choose
+        <b>Adobe Acrobat Services</b>.</li>
+      <li>Choose <b>OAuth Server-to-Server</b> as the credential type and
+        save. Adobe shows a <b>Client ID</b> and a <b>Client Secret</b>.</li>
+      <li>Copy both values into Step 2 below. The full walkthrough, with
+        screenshots described click by click, is in the
+        <i>Adobe Handoff Guide</i> that ships with this system.</li>
+    </ol>
+  </div>
+
+  <!-- ======================= STEP 2 ======================= -->
+  <div class="card">
+    <h2><span class="step">Step 2</span>Paste them here</h2>
+    <p class="small">Saved encrypted (Fernet) in <code>adobe-vault.json</code>
+      on this server only. The secret is never displayed again after
+      saving.</p>
+
+    <label for="client-id">Client ID</label>
+    <input type="text" id="client-id" autocomplete="off" spellcheck="false"
+      placeholder="e.g. p73ab…(from the Adobe Developer Console)">
+
+    <label for="client-secret">Client Secret</label>
+    <input type="password" id="client-secret" autocomplete="off"
+      placeholder="Paste the Client Secret — shown once by Adobe, keep it private">
+
+    <div class="btnrow">
+      <button class="btn-gold" id="save-btn" type="button">Save credentials</button>
+      <button class="btn-ghost" id="test-btn" type="button">Test connection</button>
+    </div>
+    <div class="notice" id="preview-note">
+      <b>Preview only:</b> this screen is a mock-up of the live setup page
+      and is not wired to the server. On the live system, <i>Save</i>
+      encrypts the credentials into the vault and <i>Test connection</i>
+      runs a real sign-in against Adobe's login service and reports the
+      result above.
+    </div>
+  </div>
+
+  <!-- ======================= ACROBAT SIGN (STAGE 2) ======================= -->
+  <div class="card disabled-card">
+    <span class="stage2">COMING IN STAGE 2</span>
+    <h2>Adobe Acrobat Sign</h2>
+    <p>Stage 2 adds e-signature for the forms that need the veteran's
+      signature — VA Form 21-22a (appointment of representative), the fee
+      agreement, and records releases. Acrobat Sign connects the same way:
+      an integration key from the firm's own Acrobat Sign account, pasted
+      here. Nothing to do with this panel yet.</p>
+
+    <label for="sign-key">Acrobat Sign integration key</label>
+    <input type="password" id="sign-key" disabled
+      placeholder="Available in Stage 2">
+    <div class="btnrow">
+      <button class="btn-ghost" type="button" disabled>Save &amp; test — Stage 2</button>
+    </div>
+  </div>
+
+  <p class="foot">
+    Billing, usage, and the audit trail stay in the firm's name because the
+    account is the firm's. To disconnect Adobe at any time, use
+    “Clear credentials” in the admin tools — or revoke the credential in
+    the Adobe Developer Console, which cuts access immediately. See the
+    Adobe Handoff Guide for rotation and revocation steps.
+  </p>
+
+</div>
+<script>
+  // Preview-only behaviour: the buttons explain themselves honestly.
+  function note(){ document.getElementById('preview-note').style.display='block'; }
+  document.getElementById('save-btn').addEventListener('click', note);
+  document.getElementById('test-btn').addEventListener('click', note);
+</script>
+</body>
+</html>

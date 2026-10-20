@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form-Fill Verification — Field by Field — Law 4 Warriors Demo</title>
+<style>
+  :root{--navy:#0b1f3a;--navy-deep:#0d1420;--gold:#c9a227;--ink:#1f2937;--muted:#5b6b82;--line:#d8dee8;--bg:#eef1f5}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.65}
+  .badge{background:var(--gold);color:var(--navy-deep);text-align:center;
+    padding:9px 14px;font-size:13px;letter-spacing:.14em;font-weight:700}
+  .badge span{font-weight:400;letter-spacing:.02em} .badge a{color:var(--navy-deep)}
+  header{background:var(--navy-deep);border-bottom:4px solid var(--gold);padding:28px 20px 22px;text-align:center}
+  .brand{font-family:Georgia,serif;letter-spacing:.3em;color:var(--gold);font-size:12px;text-transform:uppercase}
+  header h1{font-family:Georgia,serif;color:#fff;font-weight:400;font-size:28px;margin:10px 0 0}
+  .wrap{max-width:860px;margin:0 auto;padding:26px 22px 56px;background:#fff;
+    border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  .doc h1{font-family:Georgia,serif;color:var(--navy);font-size:24px;border-bottom:2px solid var(--gold);padding-bottom:6px}
+  .doc h2{font-family:Georgia,serif;color:var(--navy);font-size:20px;margin-top:30px}
+  .doc h3{font-family:Georgia,serif;color:var(--navy);font-size:17px;margin-top:24px}
+  .doc table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14.5px}
+  .doc th{background:var(--navy);color:#fff;text-align:left;padding:8px 10px}
+  .doc td{border:1px solid var(--line);padding:8px 10px;vertical-align:top}
+  .doc blockquote{border-left:4px solid var(--gold);margin:14px 0;padding:8px 16px;background:#fdf8e7;color:#4c4630}
+  .doc code{background:#eef1f5;padding:1px 5px;border-radius:3px;font-size:.92em}
+  .doc li{margin:4px 0}
+  .doc hr{border:none;border-top:1px solid var(--line);margin:26px 0}
+  .back{display:inline-block;margin-top:26px;color:var(--navy)}
+</style>
+</head>
+<body>
+<div class="badge">LIVE DEMO — SAMPLE DATA ONLY <span>· Fictional case data throughout</span> · <a href="index.html">Demo home</a></div>
+<header><div class="brand">Law 4 Warriors</div><h1>Form-Fill Verification — Field by Field</h1></header>
+<div class="wrap"><div class="doc">
+<p><strong>How to read this page:</strong> after the five forms were filled from the master record, each finished PDF was re-opened and every field's value read back out and compared, character for character, to what the record supplied. 81 fields were filled; 81 read back exact, with zero mismatches. Fields left blank are listed too, with the honest reason for each.</p><h1>Fill Verification - Law 4 Warriors POC (outbound leg)</h1>
+<p>Master record: <code>demo-master-record.json</code> - veteran <strong>James R. Calloway</strong>, VA file no. 999-88-7777, decision 2026-10-06 (Waco, Texas), combined 80%.</p>
+<p>Method: every filled PDF was re-opened with a fresh pypdf reader and each mapped field's value read back and string-compared to the value the record supplied. Fields are left editable (not flattened) for lawyer review.</p>
+<blockquote>
+<p><strong>Platform caveat (applies to all five forms):</strong> the official VA PDFs are hybrid AcroForm/XFA documents. This filler writes the AcroForm layer and sets NeedAppearances, and verification below is an AcroForm read-back. pypdf does not rewrite the embedded XFA dataset; a viewer that renders the XFA layer instead of AcroForm appearances may not show the values. The Acrobat/Adobe route in Stage 2 is the fix if that behavior is observed in the firm's viewer.</p>
+</blockquote>
+<h2>VA Form 21-526EZ (revision JAN 2026)</h2>
+<ul>
+<li>Fields the map targets: <strong>25</strong> (19 identification/address + 6 issue-row cells)</li>
+<li>Filled from the record: <strong>21</strong></li>
+<li>Read-back verified exact match (and within MaxLen): <strong>21</strong></li>
+<li>Read-back mismatches: <strong>0</strong></li>
+<li>Values exceeding the field's MaxLen (would clip on paper): <strong>0</strong></li>
+<li>Mapped but no data in the master record: <strong>4</strong></li>
+</ul>
+<p>Mapped fields left blank because the record has no value:
+- Item 6 - DOB month (<code>F[0].Page_10[0].Date_Of_Birth_Month[0]</code>)
+- Item 6 - DOB day (<code>F[0].Page_10[0].Date_Of_Birth_Day[0]</code>)
+- Item 6 - DOB year (<code>F[0].Page_10[0].Date_Of_Birth_Year[0]</code>)
+- Item 10 - ZIP (last 4) (<code>F[0].Page_10[0].CurrentMailingAddress_ZIPOrPostalCode_LastFourNumbers[0]</code>)</p>
+<p>Filled values (field = value):
+- Item 2 - Veteran first name: <strong>James</strong>
+- Item 2 - Middle initial: <strong>R</strong>
+- Item 2 - Last name: <strong>Calloway</strong>
+- Item 5 - VA file number (9 digits): <strong>999887777</strong>
+- Item 10 - Mailing address: number and street: <strong>1420 Bluebonnet Lane</strong>
+- Item 10 - City: <strong>Temple</strong>
+- Item 10 - State: <strong>TX</strong>
+- Item 10 - Country: <strong>US</strong>
+- Item 10 - ZIP (first 5): <strong>76502</strong>
+- Item 20A - Service entry month: <strong>06</strong>
+- Item 20A - Service entry day: <strong>12</strong>
+- Item 20A - Service entry year: <strong>1998</strong>
+- Item 20A - Service exit month: <strong>06</strong>
+- Item 20A - Service exit day: <strong>11</strong>
+- Item 20A - Service exit year: <strong>2004</strong>
+- Issue row - Posttraumatic stress disorder (PTSD): <strong>Posttraumatic stress disorder (PTSD) (DC 9411) - disability evaluation</strong>
+- Issue row - Lumbosacral strain: <strong>Lumbosacral strain (DC 5237) - service connection</strong>
+- Issue row - Tinnitus: <strong>Tinnitus (DC 6260) - disability evaluation</strong>
+- Issue row - Left knee limitation of flexion: <strong>Left knee limitation of flexion (DC 5260) - disability evaluation</strong>
+- Issue row - Right knee instability: <strong>Right knee instability (DC 5257) - service connection</strong>
+- Issue row - Migraine headaches: <strong>Migraine headaches (DC 8100) - decision deferred - no final decision yet</strong></p>
+<p>Not filled, by design or for lack of honest data:
+- <strong>Item 3 - Social Security Number (plus SSN header repeats on later pages)</strong> - POC master record carries the VA file number only; it has no separate SSN field.
+- <strong>Item 7 - Service number</strong> - Not present in the master record.
+- <strong>Item 8 - BDD release date</strong> - Benefits Delivery at Discharge only; veteran separated in 2004.
+- <strong>Item 9/11 - Telephone / e-mail</strong> - Not present in the POC master record (intake fields in production).
+- <strong>Item 1 - Claim program checkboxes (FDC / IDES / BDD / Standard)</strong> - Filing election for the lawyer; not master-record data.
+- <strong>Items 13-15 - Address change / homelessness / exposure sections</strong> - No corresponding data in the POC master record.
+- <strong>Item 16 - 'How disability relates to service' and 'date began/worsened' columns</strong> - Narrative/onset data is not in the decision-letter-derived record; the lawyer drafts these.
+- <strong>Item 17 - Treatment facilities</strong> - Not present in the master record.
+- <strong>Items 18-29 - Other names, POW/reserves/unit, retired &amp; training pay elections, direct deposit</strong> - No corresponding data in the POC master record.
+- <strong>Section 4 - Branch of service</strong> - This revision of the 526EZ has no branch-of-service field (service section captures dates and unit only); record branch 'United States Army' has nowhere to land on this form.
+- <strong>Item 33A - Signature and date</strong> - Signature is applied at filing (wet ink / e-sign), never pre-filled.</p>
+<p>Note: 'Date disability began or worsened' columns intentionally NOT filled: the master record carries VA effective dates, which are not onset dates.</p>
+<h2>VA Form 20-0995 (revision MAY 2024)</h2>
+<ul>
+<li>Fields the map targets: <strong>26</strong> (14 identification/address + 12 issue-row cells)</li>
+<li>Filled from the record: <strong>21</strong></li>
+<li>Read-back verified exact match (and within MaxLen): <strong>21</strong></li>
+<li>Read-back mismatches: <strong>0</strong></li>
+<li>Values exceeding the field's MaxLen (would clip on paper): <strong>0</strong></li>
+<li>Mapped but no data in the master record: <strong>5</strong></li>
+</ul>
+<p>Mapped fields left blank because the record has no value:
+- Item 5 - DOB month (<code>form1[0].#subform[16].VeteranDOBMonth[0]</code>)
+- Item 5 - DOB day (<code>form1[0].#subform[16].VeteranDOBDay[0]</code>)
+- Item 5 - DOB year (<code>form1[0].#subform[16].VeteranDOBYear[0]</code>)
+- Item 8 - Apartment/unit (<code>form1[0].#subform[16].CurrentMailingAddress_ApartmentOrUnitNumber[0]</code>)
+- Item 8 - ZIP (last 4) (<code>form1[0].#subform[16].CurrentMailingAddress_ZIPOrPostalCode_LastFourNumbers[0]</code>)</p>
+<p>Filled values (field = value):
+- Item 2 - Veteran first name: <strong>James</strong>
+- Item 2 - Middle initial: <strong>R</strong>
+- Item 2 - Last name: <strong>Calloway</strong>
+- Item 4 - VA file number (9 digits): <strong>999887777</strong>
+- Item 8 - Mailing address: number and street: <strong>1420 Bluebonnet Lane</strong>
+- Item 8 - City: <strong>Temple</strong>
+- Item 8 - State: <strong>TX</strong>
+- Item 8 - Country: <strong>US</strong>
+- Item 8 - ZIP (first 5): <strong>76502</strong>
+- Issue row - Posttraumatic stress disorder (PTSD): <strong>Posttraumatic stress disorder (PTSD) (DC 9411) - disability evaluation</strong>
+- Decision date (month) for Posttraumatic stress disorder (PTSD): <strong>10</strong>
+- Decision date (day) for Posttraumatic stress disorder (PTSD): <strong>06</strong>
+- Decision date (year) for Posttraumatic stress disorder (PTSD): <strong>2026</strong>
+- Issue row - Right knee instability: <strong>Right knee instability (DC 5257) - service connection</strong>
+- Decision date (month) for Right knee instability: <strong>10</strong>
+- Decision date (day) for Right knee instability: <strong>06</strong>
+- Decision date (year) for Right knee instability: <strong>2026</strong>
+- Issue row - Migraine headaches: <strong>Migraine headaches (DC 8100) - decision deferred - no final decision yet</strong>
+- Decision date (month) for Migraine headaches: <strong>10</strong>
+- Decision date (day) for Migraine headaches: <strong>06</strong>
+- Decision date (year) for Migraine headaches: <strong>2026</strong></p>
+<p>Not filled, by design or for lack of honest data:
+- <strong>Item 3 - Social Security Number</strong> - POC master record carries the VA file number only; no separate SSN field.
+- <strong>Items 6/7 - Service number / VA insurance policy number</strong> - Not present in the master record.
+- <strong>Items 9/10 - Telephone / e-mail</strong> - Not present in the POC master record.
+- <strong>Section 2 (Items 11-19) - Claimant identification</strong> - Claimant IS the veteran; section is completed only when claimant differs.
+- <strong>Item 1 - Benefit type radio list (RadioButtonList[0])</strong> - In the AcroForm layer the choices are opaque indices (/0-/8) whose labels live only in the XFA template; also a filing election. Not set by the filler - lawyer checks 'Compensation' on review.
+- <strong>Item 20 - Homelessness questions</strong> - Attestation questions; no housing data in the master record.
+- <strong>Section 5 (Item 22) - New and relevant evidence / treatment facilities</strong> - Evidence data is not part of the decision-letter-derived record; the lawyer completes this section - it is the substantive heart of a Supplemental Claim.
+- <strong>Item 21 rows 4-7</strong> - Only 3 contested issues exist in the sample record; remaining rows stay blank.
+- <strong>Items 25-29 - Signatures, dates signed, witness and POA blocks, accreditation number</strong> - Signatures are applied at filing; representative/accreditation data is not in the POC master record.</p>
+<h2>VA Form 20-0996 (revision MAR 2024)</h2>
+<ul>
+<li>Fields the map targets: <strong>26</strong> (14 identification/address + 12 issue-row cells)</li>
+<li>Filled from the record: <strong>21</strong></li>
+<li>Read-back verified exact match (and within MaxLen): <strong>21</strong></li>
+<li>Read-back mismatches: <strong>0</strong></li>
+<li>Values exceeding the field's MaxLen (would clip on paper): <strong>0</strong></li>
+<li>Mapped but no data in the master record: <strong>5</strong></li>
+</ul>
+<p>Mapped fields left blank because the record has no value:
+- Item 4 - DOB month (<code>form1[0].#subform[2].DOBmonth[0]</code>)
+- Item 4 - DOB day (<code>form1[0].#subform[2].DOBday[0]</code>)
+- Item 4 - DOB year (<code>form1[0].#subform[2].DOByear[0]</code>)
+- Item 6 - Apartment/unit (<code>form1[0].#subform[2].CurrentMailingAddress_ApartmentOrUnitNumber[0]</code>)
+- Item 6 - ZIP (last 4) (<code>form1[0].#subform[2].CurrentMailingAddress_ZIPOrPostalCode_LastFourNumbers[0]</code>)</p>
+<p>Filled values (field = value):
+- Item 1 - Veteran first name: <strong>James</strong>
+- Item 1 - Middle initial: <strong>R</strong>
+- Item 1 - Last name: <strong>Calloway</strong>
+- Item 3 - VA file number (9 digits): <strong>999887777</strong>
+- Item 6 - Mailing address: number and street: <strong>1420 Bluebonnet Lane</strong>
+- Item 6 - City: <strong>Temple</strong>
+- Item 6 - State: <strong>TX</strong>
+- Item 6 - Country: <strong>US</strong>
+- Item 6 - ZIP (first 5): <strong>76502</strong>
+- Issue row - Posttraumatic stress disorder (PTSD): <strong>Posttraumatic stress disorder (PTSD) (DC 9411) - disability evaluation</strong>
+- Decision date (month) for Posttraumatic stress disorder (PTSD): <strong>10</strong>
+- Decision date (day) for Posttraumatic stress disorder (PTSD): <strong>06</strong>
+- Decision date (year) for Posttraumatic stress disorder (PTSD): <strong>2026</strong>
+- Issue row - Right knee instability: <strong>Right knee instability (DC 5257) - service connection</strong>
+- Decision date (month) for Right knee instability: <strong>10</strong>
+- Decision date (day) for Right knee instability: <strong>06</strong>
+- Decision date (year) for Right knee instability: <strong>2026</strong>
+- Issue row - Migraine headaches: <strong>Migraine headaches (DC 8100) - decision deferred - no final decision yet</strong>
+- Decision date (month) for Migraine headaches: <strong>10</strong>
+- Decision date (day) for Migraine headaches: <strong>06</strong>
+- Decision date (year) for Migraine headaches: <strong>2026</strong></p>
+<p>Not filled, by design or for lack of honest data:
+- <strong>Item 2 - Social Security Number</strong> - POC master record carries the VA file number only; no separate SSN field.
+- <strong>Item 5 - VA insurance policy number</strong> - Not present in the master record.
+- <strong>Items 7/8 - Telephone / e-mail</strong> - Not present in the POC master record.
+- <strong>Section 2 (Items 9-14) - Claimant identification</strong> - Claimant IS the veteran; section is completed only when claimant differs.
+- <strong>Item 15 - Benefit type radio list (RadioButtonList[0])</strong> - Opaque export indices (/0-/8) in the AcroForm layer; labels live only in the XFA template and it is a filing election. Lawyer checks 'Compensation' on review.
+- <strong>Item 16 - Optional informal conference + contact preferences</strong> - Filing election for the lawyer/veteran; not master-record data.
+- <strong>Item 17 - Representative contact block</strong> - Representative data is not in the POC master record.
+- <strong>Item 18 rows 4-13</strong> - Only 3 contested issues exist in the sample record; remaining rows stay blank.
+- <strong>Items 19/20 - Signature, date signed, alternate signer</strong> - Signatures are applied at filing, never pre-filled.</p>
+<p>Issue/date pairing: Issue/date row pairing verified two ways: field tooltips carry 'Line N of 13' and widget geometry (same page row) pairs Date_*[N-1] with line N.</p>
+<h2>VA Form 10182 (revision JUN 2026)</h2>
+<ul>
+<li>Fields the map targets: <strong>10</strong> (4 identification/address + 6 issue-row cells)</li>
+<li>Filled from the record: <strong>9</strong></li>
+<li>Read-back verified exact match (and within MaxLen): <strong>9</strong></li>
+<li>Read-back mismatches: <strong>0</strong></li>
+<li>Values exceeding the field's MaxLen (would clip on paper): <strong>0</strong></li>
+<li>Mapped but no data in the master record: <strong>1</strong></li>
+</ul>
+<p>Mapped fields left blank because the record has no value:
+- Item 3 - Veteran DOB (MM/DD/YYYY) (<code>form1[0].#subform[0].DOBVeteran[0]</code>)</p>
+<p>Filled values (field = value):
+- Item 1 - Veteran's name: <strong>James R. Calloway</strong>
+- Item 2 - VA file number: <strong>999-88-7777</strong>
+- Item 6 - Preferred mailing address: <strong>1420 Bluebonnet Lane, Temple, TX 76502</strong>
+- Issue row - Posttraumatic stress disorder (PTSD): <strong>Posttraumatic stress disorder (PTSD) (DC 9411) - disability evaluation</strong>
+- Decision date for Posttraumatic stress disorder (PTSD): <strong>10/06/2026</strong>
+- Issue row - Right knee instability: <strong>Right knee instability (DC 5257) - service connection</strong>
+- Decision date for Right knee instability: <strong>10/06/2026</strong>
+- Issue row - Migraine headaches: <strong>Migraine headaches (DC 8100) - decision deferred - no final decision yet</strong>
+- Decision date for Migraine headaches: <strong>10/06/2026</strong></p>
+<p>Not filled, by design or for lack of honest data:
+- <strong>Items 4/5 - Appellant name/DOB if not the veteran</strong> - Appellant IS the veteran.
+- <strong>Items 7/8 - Telephone / e-mail</strong> - Not present in the POC master record.
+- <strong>Item 9 - Representative's name</strong> - Representative data is not in the POC master record.
+- <strong>Item 10 - Board review option (Direct Review / Evidence / Hearing radio lists)</strong> - The single most consequential election on this form; the lawyer chooses the docket. Also opaque export indices (/0-/2) in the AcroForm layer.
+- <strong>Item 6 - Homelessness checkbox</strong> - Attestation; no housing data in the master record.
+- <strong>Item 11 rows 4-5</strong> - Only 3 contested issues exist in the sample record.
+- <strong>Items 12/13 - Signature / date signed</strong> - The form's own tooltip states the signature field cannot be typed or digitally signed - ink signature on paper at filing.</p>
+<h2>VA Form 21-22a (revision JUL 2023)</h2>
+<ul>
+<li>Fields the map targets: <strong>14</strong> (14 identification/address + 0 issue-row cells)</li>
+<li>Filled from the record: <strong>9</strong></li>
+<li>Read-back verified exact match (and within MaxLen): <strong>9</strong></li>
+<li>Read-back mismatches: <strong>0</strong></li>
+<li>Values exceeding the field's MaxLen (would clip on paper): <strong>0</strong></li>
+<li>Mapped but no data in the master record: <strong>5</strong></li>
+</ul>
+<p>Mapped fields left blank because the record has no value:
+- Item 4 - DOB month (<code>form1[0].#subform[0].Date_Of_Birth_Month[0]</code>)
+- Item 4 - DOB day (<code>form1[0].#subform[0].Date_Of_Birth_Day[0]</code>)
+- Item 4 - DOB year (<code>form1[0].#subform[0].Date_Of_Birth_Year[0]</code>)
+- Item 7 - Apartment/unit (<code>form1[0].#subform[0].MailingAddress_ApartmentOrUnitNumber[0]</code>)
+- Item 7 - ZIP (last 4) (<code>form1[0].#subform[0].MailingAddress_ZIPOrPostalCode_LastFourNumbers[0]</code>)</p>
+<p>Filled values (field = value):
+- Item 1 - Veteran first name: <strong>James</strong>
+- Item 1 - Middle initial: <strong>R</strong>
+- Item 1 - Last name: <strong>Calloway</strong>
+- Item 3 - VA file number (9 digits): <strong>999887777</strong>
+- Item 7 - Mailing address: number and street: <strong>1420 Bluebonnet Lane</strong>
+- Item 7 - City: <strong>Temple</strong>
+- Item 7 - State: <strong>TX</strong>
+- Item 7 - Country: <strong>US</strong>
+- Item 7 - ZIP (first 5): <strong>76502</strong></p>
+<p>Not filled, by design or for lack of honest data:
+- <strong>Item 2 - Social Security Number (and SSN header repeats on pages 2-3)</strong> - POC master record carries the VA file number only; no separate SSN field.
+- <strong>Item 5 - Service number</strong> - Not present in the master record. (The field NAMED 'Veterans_Service_Number_If_Applicable[1]' is Item 5; [0] is Item 3, the VA file number - verified by tooltips.)
+- <strong>Item 6 - Branch of service radio list</strong> - DATA PRESENT BUT NOT FILLED: record branch is 'United States Army', but in the AcroForm layer this control is one merged field with opaque export states /0-/7, while the XFA template stores different item values (ARMY=4, NAVY=5, AIR FORCE=6...). The two numbering schemes cannot be reconciled with certainty without rendering in Acrobat, and guessing a radio value on a legal appointment form is worse than leaving it for the lawyer's one click. This is the known AcroForm/XFA gap; the Acrobat/Adobe route (Stage 2) closes it.
+- <strong>Items 8/9 - Veteran telephone / e-mail</strong> - Not present in the POC master record.
+- <strong>Section 2 (Items 10-15) - Claimant information</strong> - Claimant IS the veteran; section is completed only when claimant differs.
+- <strong>Section 3 (Item 16) - Appointed representative name, organization, address, phone, e-mail</strong> - THE representative block the system will fill in production - but from the firm's representative profile, which is firm data, not veteran data. The POC master record (built from a decision letter) contains no representative block, so nothing honest can be written here yet.
+- <strong>Item 19 - Disclosure authorization checkboxes + firm/individual names</strong> - Client consent elections plus representative data (see Item 16).
+- <strong>Items 20-22 - 7332-records authorization, limitation of consent, address-change authorization</strong> - The veteran's own consent elections; never pre-checked by software.
+- <strong>Item 24 - Limitations on representation</strong> - Lawyer-drafted, if any.
+- <strong>Items 17/18/23/25 - Signatures and dates signed</strong> - Signatures are applied at execution, never pre-filled.</p>
+<h2>The deferred-issue honesty note</h2>
+<p>The sample record's migraine rating has decision_type <strong>deferred</strong> - the VA has not yet made a final decision on it, so strictly it is not yet appealable. Per the POC's instructions it is listed on the three decision-review forms (0995/0996/10182) so the mapping is fully exercised; on a real filing the lawyer strikes that row. The fill engine lists exactly what the record says - the lawyer decides what gets filed.</p>
+</div>
+<a class="back" href="index.html">&larr; Back to the demo home</a>
+</div>
+</body>
+</html>
