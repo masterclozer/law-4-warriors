@@ -40,7 +40,20 @@
   .rbar>div{height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold))}
   .slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
   .slot{border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+  .slot.open{border:2px dashed #b6c0cf;background:#fafbfc}
   .slot .lab{font-weight:700;color:var(--navy);font-size:14.5px;margin-bottom:4px}
+  /* overall meter + how-pieces-arrive tiles */
+  .overall{background:var(--navy-deep);border-top:4px solid var(--gold);border-radius:8px;
+    padding:20px 22px;color:#e8edf5;margin-bottom:26px}
+  .overall .big{font-family:Georgia,serif;font-size:30px;color:#fff}
+  .overall .big b{color:var(--gold);font-weight:400}
+  .overall p{color:#aeb9ca;margin:6px 0 0;font-size:14.5px}
+  .overall .rbar{background:#24334d;height:14px;border-radius:7px}
+  .tiles4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .ptile{background:#fff;border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:8px;padding:16px 18px}
+  .ptile h4{font-family:Georgia,serif;color:var(--navy);margin:0 0 6px;font-size:16.5px}
+  .ptile p{font-size:14px;margin:0 0 8px}
+  .ptile p:last-child{margin-bottom:0}
   .slot .det{font-size:13.5px;color:var(--muted)}
   .chip{display:inline-block;border-radius:20px;padding:1px 10px;font-size:12px;font-weight:700;margin-bottom:6px}
   .chip.ok{background:var(--good-bg);color:var(--good);border:1px solid #bfe3cf}
@@ -95,8 +108,8 @@
 
 <header>
   <div class="brand">Law 4 Warriors</div>
-  <h1>The Evidence Locker</h1>
-  <p>A VA claim is won or lost on evidence. The locker collects it as we go — one small ask at a time —
+  <h1>The Evidence Locker — collect as you go</h1>
+  <p>Every claimed condition needs three pieces. The system collects them one small ask at a time —
      so the veteran is never handed a thirty-item homework list.</p>
 </header>
 
@@ -113,16 +126,24 @@
     <em>system</em> works — not a pile of chores dumped on the veteran.</p>
   </div>
 
+  <div class="overall" role="region" aria-label="Overall file readiness">
+    <div class="big">File Readiness — evidence: <b>73%</b></div>
+    <div class="rbar"><div style="width:73%"></div></div>
+    <p><strong style="color:#fff">11 of 15 pieces in file</strong> across Calloway&rsquo;s five conditions.
+    Every open slot below is already being worked — a packet out, a statement requested, a diary building.
+    Nothing on this board is waiting on the veteran to figure it out.</p>
+  </div>
+
   <h2 class="section">Calloway&rsquo;s conditions — the three slots, per condition</h2>
 
   <div class="board">
-    <div class="board-head"><h3>Posttraumatic stress disorder (PTSD)</h3><div class="pct">83%<small>EVIDENCE READY</small></div></div>
+    <div class="board-head"><h3>Posttraumatic stress disorder (PTSD)</h3><div class="pct">67%<small>EVIDENCE READY</small></div></div>
     <div class="dc">Diagnostic code 9411 · rated 70% · VA increased the evaluation Oct 6, 2026</div>
-    <div class="rbar"><div style="width:83%"></div></div>
+    <div class="rbar"><div style="width:67%"></div></div>
     <div class="slots">
       <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">Current diagnosis</div><div class="det">VA treatment records confirm the diagnosis and current severity.</div></div>
-      <div class="slot"><span class="chip wait">⏳ Collecting</span><div class="lab">What happened in service</div><div class="det">His personal stressor statement is drafted from his own words; unit records requested to corroborate.</div></div>
-      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">The connection (nexus)</div><div class="det">The VA examiner linked the condition to service in the exam report.</div></div>
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">What happened in service</div><div class="det">Documented in the decision letter — the VA&rsquo;s own decision records the in-service stressor.</div></div>
+      <div class="slot open"><span class="chip need">○ One small ask away</span><div class="lab">Nexus — the link</div><div class="det">Open — doctor packet sent. The nexus packet is with his doctor, tracked like a deadline (see &ldquo;How pieces arrive&rdquo; below).</div></div>
     </div>
   </div>
 
@@ -133,7 +154,7 @@
     <div class="slots">
       <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">Current diagnosis</div><div class="det">Current treatment records on file.</div></div>
       <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">What happened in service</div><div class="det">In-service back injury documented in his service treatment records.</div></div>
-      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">The connection (nexus)</div><div class="det">Continuous symptoms documented since separation — the chain is closed.</div></div>
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">Nexus — the link</div><div class="det">Continuous symptoms documented since separation — the chain is closed.</div></div>
     </div>
   </div>
 
@@ -144,7 +165,7 @@
     <div class="slots">
       <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">Current diagnosis</div><div class="det">Audiology exam confirms bilateral tinnitus.</div></div>
       <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">What happened in service</div><div class="det">Artillery noise exposure is part of his service record.</div></div>
-      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">The connection (nexus)</div><div class="det">Onset during service documented; examiner agreed.</div></div>
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">Nexus — the link</div><div class="det">Onset during service documented; examiner agreed.</div></div>
     </div>
   </div>
 
@@ -155,29 +176,45 @@
     <div class="slots">
       <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">Current diagnosis</div><div class="det">Current range-of-motion measurements on file.</div></div>
       <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">What happened in service</div><div class="det">Treated for a knee injury in service — sick-call slips in his records.</div></div>
-      <div class="slot"><span class="chip wait">⏳ Collecting</span><div class="lab">The connection (nexus)</div><div class="det">A buddy statement is out for signature — Mike served with him and saw the injury happen.</div></div>
+      <div class="slot open"><span class="chip need">○ One small ask away</span><div class="lab">Nexus — the link</div><div class="det">Open — a buddy statement is out for signature. Mike served with him and saw the injury happen; his statement closes this slot.</div></div>
     </div>
   </div>
 
   <div class="board">
-    <div class="board-head"><h3>Right knee instability</h3><div class="pct">33%<small>EVIDENCE READY</small></div></div>
-    <div class="dc">Diagnostic code 5257 · service connection denied Oct 6, 2026 — now on appeal</div>
+    <div class="board-head"><h3>Migraine headaches</h3><div class="pct">33%<small>EVIDENCE READY</small></div></div>
+    <div class="dc">Diagnostic code 8100 · decision deferred Oct 6, 2026 — VA wants more evidence</div>
     <div class="rbar"><div style="width:33%"></div></div>
     <div class="slots">
-      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">Current diagnosis</div><div class="det">His doctor documents the knee giving way several times a month.</div></div>
-      <div class="slot"><span class="chip need">○ Still needed</span><div class="lab">What happened in service</div><div class="det">Nothing in the service records mentions this knee — so a buddy statement becomes the evidence. Already requested.</div></div>
-      <div class="slot"><span class="chip need">○ Still needed</span><div class="lab">The connection (nexus)</div><div class="det">A nexus packet is being assembled for his doctor — see below.</div></div>
+      <div class="slot open"><span class="chip need">○ One small ask away</span><div class="lab">Current diagnosis</div><div class="det">Open — his symptom diary is building the picture. Three weeks logged so far, and raters credit a diary kept as it happens.</div></div>
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">What happened in service</div><div class="det">Headaches treated in service — entries in his service treatment records.</div></div>
+      <div class="slot open"><span class="chip need">○ One small ask away</span><div class="lab">Nexus — the link</div><div class="det">Open — comes after the diary: a doctor reviews the log and the service entries together.</div></div>
     </div>
   </div>
 
-  <div class="board">
-    <div class="board-head"><h3>Migraine headaches</h3><div class="pct">50%<small>EVIDENCE READY</small></div></div>
-    <div class="dc">Diagnostic code 8100 · decision deferred Oct 6, 2026 — VA wants more evidence</div>
-    <div class="rbar"><div style="width:50%"></div></div>
-    <div class="slots">
-      <div class="slot"><span class="chip wait">⏳ Collecting</span><div class="lab">Current diagnosis</div><div class="det">His symptom diary is building the picture — three weeks logged so far, and raters credit a diary kept as it happens.</div></div>
-      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">What happened in service</div><div class="det">Headaches treated in service — entries in his service treatment records.</div></div>
-      <div class="slot"><span class="chip need">○ Still needed</span><div class="lab">The connection (nexus)</div><div class="det">Comes after the diary — a doctor reviews the log and the service entries together.</div></div>
+  <h2 class="section">How pieces arrive</h2>
+  <div class="tiles4">
+    <div class="ptile">
+      <h4>🤝 Buddy statement</h4>
+      <p>The buddy gets a text with his own mini flow — three tap questions and a &ldquo;sign&rdquo; tap.
+      No blank form, no essay.</p>
+      <p><strong>Ends with:</strong> &ldquo;Statement received ✓&rdquo; — and the signed statement lands in the locker.</p>
+    </div>
+    <div class="ptile">
+      <h4>🩺 Nexus doctor packet</h4>
+      <p>A one-page records summary plus exactly what the letter must say — the connection, in the
+      doctor&rsquo;s own reasoned words.</p>
+      <p><strong>Tracked like a deadline:</strong> assembled → sent → opinion due — the system chases it, not the veteran.</p>
+    </div>
+    <div class="ptile">
+      <h4>📱 Weekly symptom check-in</h4>
+      <p>A two-tap text: &ldquo;Migraines this week?&rdquo; → he taps <strong>&ldquo;3 days&rdquo;</strong> —
+      and it&rsquo;s logged straight into his symptom diary.</p>
+      <p><strong>Ten seconds</strong>, while it&rsquo;s fresh — the diary becomes the exhibit.</p>
+    </div>
+    <div class="ptile">
+      <h4>📷 Photo upload</h4>
+      <p>Any document, snapped with a phone — a letter, a slip, a form. No scanner, no mailing anything.</p>
+      <p><strong>Read automatically:</strong> dates, ratings, and deadlines are pulled into the master record for him.</p>
     </div>
   </div>
 
@@ -198,6 +235,7 @@
         <span class="tap on">His knee gave out on runs ✓</span> <span class="tap on">He had headaches that put him down ✓</span> <span class="tap">He was in the blast in &rsquo;99</span> <span class="tap">🎤 Say it instead</span></div>
       <div class="msg them">Last step — type your name to sign, and you&rsquo;re done. James&rsquo;s team thanks you.</div>
       <div class="msg us">Michael Torres ✓ signed</div>
+      <div class="msg them"><strong>Statement received ✓</strong> — thank you, Mike. It&rsquo;s already in James&rsquo;s file.</div>
     </div>
     <div class="statement">
       <div class="sh">Statement generated from Mike&rsquo;s taps — statement in support of claim</div>
@@ -226,9 +264,8 @@
       <span class="now">⏳ Opinion expected — by Nov 5</span>
       <span>Filed to the locker</span>
     </div>
-    <p class="small" style="margin-top:12px">For Calloway&rsquo;s right knee: VA denied the connection because the
-    service records are silent. A doctor&rsquo;s reasoned opinion plus Mike&rsquo;s statement is exactly how that
-    denial gets answered on appeal.</p>
+    <p class="small" style="margin-top:12px">This packet is the one out for Calloway&rsquo;s PTSD slot above:
+    the records are strong, and a doctor&rsquo;s reasoned opinion is the one piece that closes the link.</p>
   </div>
 
   <h2 class="section">The symptom diary — evidence that builds itself</h2>
@@ -259,6 +296,12 @@
       <div class="ev"><span class="day">Day 14</span> — Nexus packet status lands in the locker; if the doctor hasn&rsquo;t answered, the companion follows up so the veteran doesn&rsquo;t have to.</div>
       <div class="ev"><span class="day">Ongoing</span> — One small ask at a time, each one celebrated when it lands, until every slot on every board reads <strong>✓ In file</strong>.</div>
     </div>
+  </div>
+
+  <div class="intro" style="margin-top:26px">
+    <p style="margin:0"><strong>The rule underneath all of it:</strong> one ask at a time, sized for a text
+    message. Nothing in this locker is ever a 30-item homework list — the system carries the list,
+    so the veteran never has to.</p>
   </div>
 
 </div>

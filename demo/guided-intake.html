@@ -128,6 +128,12 @@
   .route .rs{color:var(--muted);font-size:.97rem;margin-top:2px}
   .route.sent{border-color:var(--good);background:#f2faf5}
   .route .sentline{color:var(--good);font-weight:700;margin-top:8px}
+  .rchip{display:inline-block;background:var(--navy);color:#fff;border-radius:20px;
+    padding:2px 11px;font-size:.8rem;font-weight:700;margin-top:8px}
+  .rchip.go{background:var(--good)}
+  .recover-state{background:#fff;border:2px solid var(--good);border-radius:10px;
+    padding:12px 16px;margin:0 0 12px;font-weight:700;color:var(--navy)}
+  .recover-state .ck{color:var(--good)}
   .btn-send{margin-top:10px;background:var(--navy);color:#fff;border:2px solid var(--navy);border-radius:10px;
     min-height:52px;padding:10px 18px;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:inherit}
   .btn-send:hover{background:var(--gold);color:var(--navy-deep);border-color:var(--gold-dark)}
@@ -454,27 +460,32 @@
       <input type="file" id="fileDD214" accept="image/*" capture="environment" hidden aria-label="Photo of your DD214">
       <input type="file" id="fileVALetter" accept="image/*" capture="environment" hidden aria-label="Photo of your VA letter">
       <div class="recover" id="recoverPanel" role="region" aria-label="Records Recovery">
-        <h3>We&rsquo;ve got it from here.</h3>
+        <h3>Your case moves forward today — we hunt the paper, you don&rsquo;t.</h3>
         <p>You do <strong>not</strong> need to find your DD214 for your case to move forward. The moment you
         finish this intake, we start your <strong>Records Recovery</strong> automatically — and your case
-        keeps moving while the paper catches up.</p>
-        <p style="margin-bottom:4px"><strong>Here&rsquo;s how we get it:</strong></p>
+        keeps moving while the paper catches up. This is not a dead end; it&rsquo;s a lane.</p>
+        <p class="recover-state"><span class="ck">Recovery started ✓</span> — <strong>Recovery in motion.</strong>
+        It counts toward your File Readiness exactly like a document in hand.</p>
+        <p style="margin-bottom:4px"><strong>Here&rsquo;s how we get it — three lanes, all ours to work:</strong></p>
         <div class="route">
-          <div class="rt">1 · We walk you to it, tap by tap</div>
-          <div class="rs">Most veterans can download their DD214 online (through milConnect) in a few minutes.
+          <div class="rt">1 · We walk you through a 5-minute download (milConnect)</div>
+          <div class="rs">Most veterans can download their DD214 online in about five minutes.
           We&rsquo;ll guide you screen by screen — you just tap along.</div>
+          <span class="rchip">Lane 1 · Guided — ready when you are</span>
         </div>
         <div class="route" id="routeArchives">
-          <div class="rt">2 · We ask the National Archives for it</div>
+          <div class="rt">2 · Archives request — we fill it in from your answers and track it</div>
           <div class="rs">We fill in the official request (eVetRecs) from everything you just told us — your
-          name, branch, and service years. You don&rsquo;t type it again. You just sign.</div>
+          name, branch, and service years. You don&rsquo;t type it again. You just sign, and we track it until it lands.</div>
+          <span class="rchip go">Lane 2 · Recovery in motion</span>
           <button type="button" class="btn-send" id="btnArchives">Send my Archives request →</button>
           <div class="sentline" id="archivesSent" hidden>✓ Request sent — we&rsquo;re tracking it for you. Nothing else for you to do.</div>
         </div>
         <div class="route">
-          <div class="rt">3 · Your representative can pull your VA file directly</div>
+          <div class="rt">3 · Your lawyer can pull your VA file directly</div>
           <div class="rs">Once you&rsquo;ve signed your representative form, your Law 4 Warriors team can request
-          your VA claims file themselves.</div>
+          your VA claims file themselves — no errand for you at all.</div>
+          <span class="rchip">Lane 3 · Starts at signing</span>
         </div>
         <div class="fire-note">🔥 <strong>Older veterans:</strong> if your records were damaged in the 1973
         Archives fire, don&rsquo;t worry — we prove service other ways. Your word, and your buddies&rsquo;
@@ -591,7 +602,7 @@ function readinessItems(){
     {key:"conds",    label:"your conditions",    pts:15, got:A.conditions.length>0, step:5},
     {key:"status",   label:"where your claim stands", pts:10, got:!!A.status, step:6},
     {key:"decision", label:"your decision date", pts:5,  got: needsDate ? !!A.decisionDate : !!A.status, step:6},
-    {key:"dd214",    label:"your DD214 — photo or recovery", pts:7, got:!!A.docs.dd214 || A.dd214Status==="dont" || A.dd214Status==="never", step:7},
+    {key:"dd214",    label:"your DD214 — photo, or Recovery in motion", pts:7, got:!!A.docs.dd214 || A.dd214Status==="dont" || A.dd214Status==="never", step:7},
     {key:"valetter", label:"a VA letter photo",  pts:5,  got:!!A.docs.vaLetter, step:7}
   ];
 }
@@ -884,7 +895,7 @@ function buildRecord(){
 function docSummary(){
   const parts = [];
   if(A.docs.dd214) parts.push("DD214 photo ✓");
-  else if(A.dd214Status==="dont" || A.dd214Status==="never") parts.push("DD214 — recovery started ✓");
+  else if(A.dd214Status==="dont" || A.dd214Status==="never") parts.push("DD214 — Recovery in motion ✓ (recovery started)");
   if(A.docs.vaLetter) parts.push("VA letter ✓");
   return parts.join(" · ");
 }
@@ -906,7 +917,7 @@ function buildDone(){
       ((A.docs.dd214 && A.docs.vaLetter) ? "s" : "") + " — you never type what a document already says.</p>";
   }
   if(A.dd214Status==="dont" || A.dd214Status==="never"){
-    does += "<p>🛟 <strong>Records Recovery: started ✓</strong> — your case moves forward now; the paper catches up." +
+    does += "<p>🛟 <strong>Records Recovery: started ✓ — Recovery in motion.</strong> Your case moves forward today; we hunt the paper, you don&rsquo;t." +
       ((A.recovery && A.recovery.archivesSent)
         ? " Your Archives request is already sent, and we&rsquo;re tracking it for you."
         : " We&rsquo;ll walk you to your DD214 and file the Archives request for you.") +
