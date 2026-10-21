@@ -478,6 +478,13 @@
       .f-fine{margin-top:1rem;font-size:.8rem;color:#8491a6;text-align:center}
       .f-done{display:none;margin-top:1.4rem;border:1px solid var(--gold);background:rgba(201,162,39,.1);padding:1.1rem 1.2rem;color:#f0e3bb;font-size:.95rem}
       .f-done.show{display:block}
+      .f-consent{display:flex;gap:.7rem;align-items:flex-start;margin-top:1.3rem}
+      .f-consent input[type="checkbox"]{width:18px;height:18px;flex:none;margin-top:.15rem;accent-color:var(--gold)}
+      .f-consent label{font-size:.92rem;font-weight:600;color:var(--gold-light);cursor:pointer;line-height:1.45}
+      .f-offscreen{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+      .f-confirm{text-align:center;padding:1.4rem 0 .4rem}
+      .f-confirm h3{color:#fff;font-size:1.3rem}
+      .f-confirm p{color:#c3cddc;margin-top:.7rem}
 
       /* Footer */
       footer{background:#04080f;border-top:1px solid var(--line);padding:4.5rem 0 2rem}
@@ -650,43 +657,41 @@
               <input id="fPhone" name="phone" type="tel" autocomplete="tel" placeholder="(555) 000-0000" />
             </div>
             <div class="f-field">
-              <label for="fEmail">Email *</label>
-              <input id="fEmail" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+              <label for="fEmail">Email</label>
+              <input id="fEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com" />
             </div>
             <div class="f-field">
-              <label for="fBranch">Branch of Service</label>
-              <select id="fBranch" name="branch">
-                <option value="">Select branch…</option>
-                <option>U.S. Army</option>
-                <option>U.S. Marine Corps</option>
-                <option>U.S. Navy</option>
-                <option>U.S. Air Force</option>
-                <option>U.S. Coast Guard</option>
-                <option>U.S. Space Force</option>
-                <option>National Guard / Reserve</option>
-                <option>Family Member / Survivor</option>
+              <label for="fWindow">Preferred Callback Time</label>
+              <select id="fWindow" name="callback_window">
+                <option value="">Select one…</option>
+                <option value="morning">Morning</option>
+                <option value="afternoon">Afternoon</option>
+                <option value="evening">Evening</option>
               </select>
             </div>
             <div class="f-field full">
               <label for="fType">What Can We Help With?</label>
-              <select id="fType" name="type">
+              <select id="fType" name="topic">
                 <option value="">Select one…</option>
-                <option>New VA disability claim</option>
-                <option>Rating increase</option>
-                <option>PTSD / mental health claim</option>
-                <option>TDIU / unemployability</option>
-                <option>Denied claim — appeal</option>
-                <option>Survivor / DIC benefits</option>
-                <option>Not sure — I need a case review</option>
+                <option value="va_disability">VA disability claim</option>
+                <option value="ptsd_mental_health">PTSD &amp; mental health</option>
+                <option value="tdiu">TDIU / unemployability</option>
+                <option value="appeal_denial">Appeal of a denial</option>
+                <option value="other">Something else</option>
               </select>
             </div>
             <div class="f-field full">
               <label for="fMsg">Tell Us About Your Case</label>
               <textarea id="fMsg" name="message" placeholder="Your service, your conditions, and where your claim stands — as much or as little as you're comfortable sharing."></textarea>
             </div>
+            <input class="f-offscreen" type="text" name="website2" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          </div>
+          <div class="f-consent">
+            <input id="fConsent" name="consent" type="checkbox" />
+            <label for="fConsent">You may contact me about my inquiry.</label>
           </div>
           <button class="btn btn-gold" type="submit">Request Free Consultation <span class="arr">→</span></button>
-          <p class="f-fine">Submitting opens your email app with your request addressed to our intake team. Nothing is sent until you press send there.</p>
+          <p class="f-fine">Your request goes straight to our intake team. We reply within one business day.</p>
           <div class="f-done" id="formDone" role="status"></div>
         </form>
       </div>
@@ -814,39 +819,70 @@
         });
       });
 
-      // Consultation form -> composes an email to intake (nothing faked, nothing stored)
+      // Consultation form -> posts the inquiry to the intake endpoint
+      var INQUIRY_ENDPOINT = 'https://app.law4warriors.com/inquiry';
       document.getElementById('consultForm').addEventListener('submit', function (e) {
         e.preventDefault();
-        var name = document.getElementById('fName').value.trim();
-        var email = document.getElementById('fEmail').value.trim();
+        var form = e.target;
         var done = document.getElementById('formDone');
-        if (!name || !email || email.indexOf('@') < 1) {
-          done.textContent = 'Please add your name and a valid email address so we can reach you — then press the button again.';
+        var btn = form.querySelector('button[type="submit"]');
+        var name = document.getElementById('fName').value.trim();
+        var phone = document.getElementById('fPhone').value.trim();
+        var email = document.getElementById('fEmail').value.trim();
+        var callbackWindow = document.getElementById('fWindow').value;
+        var topic = document.getElementById('fType').value;
+        var message = document.getElementById('fMsg').value.trim();
+        var consent = document.getElementById('fConsent').checked;
+        var website2 = form.elements['website2'].value;
+        function showMsg(text) {
+          done.textContent = text;
           done.classList.add('show');
+        }
+        if (!name) {
+          showMsg('Please tell us your name, so we know who we are helping.');
           return;
         }
-        var phone = document.getElementById('fPhone').value.trim();
-        var branch = document.getElementById('fBranch').value;
-        var type = document.getElementById('fType').value;
-        var msg = document.getElementById('fMsg').value.trim();
-        var lines = [
-          'FREE CONSULTATION REQUEST — Law 4 Warriors',
-          '',
-          'Name: ' + name,
-          'Email: ' + email,
-          'Phone: ' + (phone || '—'),
-          'Branch of service: ' + (branch || '—'),
-          'Help needed: ' + (type || '—'),
-          '',
-          'About my case:',
-          msg || '—'
-        ];
-        var href = 'mailto:contact@law4warriors.com'
-          + '?subject=' + encodeURIComponent('Free Consultation Request — ' + name)
-          + '&body=' + encodeURIComponent(lines.join('\n'));
-        done.textContent = 'Thank you, ' + name.split(' ')[0] + '. Your email app is opening with your request ready to send to contact@law4warriors.com — just press send there and an advocate will review it within one business day. Prefer to talk? Call (800) 555-0147.';
-        done.classList.add('show');
-        window.location.href = href;
+        if (!phone && !email) {
+          showMsg('Please add a phone number or an email address — we need at least one way to reach you.');
+          return;
+        }
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showMsg('That email address doesn\'t look quite right — please check it and try again.');
+          return;
+        }
+        if (!consent) {
+          showMsg('We need your OK to contact you before we can submit your request — please check the box above and try again.');
+          return;
+        }
+        var btnHTML = btn.innerHTML;
+        btn.disabled = true;
+        btn.textContent = 'Sending…';
+        done.classList.remove('show');
+        done.textContent = '';
+        fetch(INQUIRY_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name,
+            phone: phone,
+            email: email,
+            callback_window: callbackWindow,
+            topic: topic,
+            message: message,
+            consent: true,
+            website2: website2
+          })
+        }).then(function (res) {
+          if (!res.ok) { throw new Error('Request failed'); }
+          return res.json();
+        }).then(function (data) {
+          if (!data || data.ok !== true) { throw new Error('Request failed'); }
+          form.innerHTML = '<div class="f-confirm"><h3>We received your inquiry.</h3><p>Thank you for reaching out. A member of our team will reach out during your chosen callback window within one business day. Everything you shared with us is confidential.</p></div>';
+        }).catch(function () {
+          btn.disabled = false;
+          btn.innerHTML = btnHTML;
+          showMsg('Our online form is still being set up, so this request did not go through. Please reach us directly — call (800) 555-0147 or email contact@law4warriors.com — and we will take it from there.');
+        });
       });
     </script>
   </body>
