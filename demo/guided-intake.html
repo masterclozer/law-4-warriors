@@ -118,6 +118,23 @@
   .doc-tile.received{border-color:var(--good);background:var(--good-bg)}
   .doc-tile.received .s{color:var(--good);font-weight:600}
 
+  /* records recovery */
+  .recover{display:none;margin-top:18px;border:2px solid var(--good);background:var(--good-bg);border-radius:12px;padding:18px}
+  .recover.show{display:block;animation:fadeUp .35s ease}
+  .recover h3{font-family:Georgia,serif;color:var(--navy);margin:0 0 6px;font-size:1.3rem}
+  .recover p{margin:0 0 10px}
+  .route{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:10px 0}
+  .route .rt{font-weight:700;color:var(--navy);font-size:1.05rem}
+  .route .rs{color:var(--muted);font-size:.97rem;margin-top:2px}
+  .route.sent{border-color:var(--good);background:#f2faf5}
+  .route .sentline{color:var(--good);font-weight:700;margin-top:8px}
+  .btn-send{margin-top:10px;background:var(--navy);color:#fff;border:2px solid var(--navy);border-radius:10px;
+    min-height:52px;padding:10px 18px;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn-send:hover{background:var(--gold);color:var(--navy-deep);border-color:var(--gold-dark)}
+  .btn-send:disabled{background:var(--good);border-color:var(--good);color:#fff;cursor:default}
+  .fire-note{font-size:.95rem;color:var(--ink);background:#fff;border-left:4px solid var(--gold);
+    border-radius:6px;padding:10px 14px;margin-top:12px}
+
   /* stamp */
   .stamp{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:80;pointer-events:none}
   .stamp.show{display:flex}
@@ -417,7 +434,14 @@
       <h2 class="q" id="q7" tabindex="-1">Got paperwork handy? Snap it — don&rsquo;t type it.</h2>
       <p class="help">Take a photo and you&rsquo;re done. Our system reads the document and pulls the
       dates, ratings, and deadlines out for you.</p>
-      <div class="tiles one">
+      <p class="sublabel" style="margin-top:0">First — your DD214 (your discharge papers)</p>
+      <div class="tiles one" id="dd214Choice" role="group" aria-label="Do you have your DD214?">
+        <button type="button" class="tile" data-dd214="have" aria-pressed="false">✅ I have it — I&rsquo;ll snap the photo</button>
+        <button type="button" class="tile" data-dd214="dont" aria-pressed="false">🤷 I don&rsquo;t have it</button>
+        <button type="button" class="tile" data-dd214="never" aria-pressed="false">❓ I never got one</button>
+      </div>
+      <p class="help" id="haveNote" hidden style="margin-top:12px">Perfect — use the photo button right below and you&rsquo;re done with this step.</p>
+      <div class="tiles one" style="margin-top:14px">
         <button type="button" class="tile doc-tile" id="docDD214">
           <span class="t">📷 Snap a photo of your DD214</span>
           <span class="s" id="docDD214State">Proves your service, dates, and branch</span>
@@ -429,7 +453,33 @@
       </div>
       <input type="file" id="fileDD214" accept="image/*" capture="environment" hidden aria-label="Photo of your DD214">
       <input type="file" id="fileVALetter" accept="image/*" capture="environment" hidden aria-label="Photo of your VA letter">
-      <p class="help" style="margin-top:14px">No paperwork handy? Skip this — with your permission, the firm can request your records directly.</p>
+      <div class="recover" id="recoverPanel" role="region" aria-label="Records Recovery">
+        <h3>We&rsquo;ve got it from here.</h3>
+        <p>You do <strong>not</strong> need to find your DD214 for your case to move forward. The moment you
+        finish this intake, we start your <strong>Records Recovery</strong> automatically — and your case
+        keeps moving while the paper catches up.</p>
+        <p style="margin-bottom:4px"><strong>Here&rsquo;s how we get it:</strong></p>
+        <div class="route">
+          <div class="rt">1 · We walk you to it, tap by tap</div>
+          <div class="rs">Most veterans can download their DD214 online (through milConnect) in a few minutes.
+          We&rsquo;ll guide you screen by screen — you just tap along.</div>
+        </div>
+        <div class="route" id="routeArchives">
+          <div class="rt">2 · We ask the National Archives for it</div>
+          <div class="rs">We fill in the official request (eVetRecs) from everything you just told us — your
+          name, branch, and service years. You don&rsquo;t type it again. You just sign.</div>
+          <button type="button" class="btn-send" id="btnArchives">Send my Archives request →</button>
+          <div class="sentline" id="archivesSent" hidden>✓ Request sent — we&rsquo;re tracking it for you. Nothing else for you to do.</div>
+        </div>
+        <div class="route">
+          <div class="rt">3 · Your representative can pull your VA file directly</div>
+          <div class="rs">Once you&rsquo;ve signed your representative form, your Law 4 Warriors team can request
+          your VA claims file themselves.</div>
+        </div>
+        <div class="fire-note">🔥 <strong>Older veterans:</strong> if your records were damaged in the 1973
+        Archives fire, don&rsquo;t worry — we prove service other ways. Your word, and your buddies&rsquo;
+        words, count as evidence.</div>
+      </div>
       <div class="actions">
         <button type="button" class="btn" data-back="7">← Back</button>
         <button type="button" class="btn btn-skip" data-skip="7">Skip for now</button>
@@ -509,7 +559,8 @@ function freshAnswers(){
   return { name:"", phone:"", email:"", emailNA:false, dob:"",
     branch:"", era:"", entryYear:null, sepYear:null,
     conditions:[], other:"", status:"", decisionDate:"",
-    docs:{ dd214:null, vaLetter:null }, vaFile:"", combined:null };
+    docs:{ dd214:null, vaLetter:null }, dd214Status:"", recovery:{ archivesSent:false },
+    vaFile:"", combined:null };
 }
 let A = freshAnswers();
 let current = 0;
@@ -540,7 +591,7 @@ function readinessItems(){
     {key:"conds",    label:"your conditions",    pts:15, got:A.conditions.length>0, step:5},
     {key:"status",   label:"where your claim stands", pts:10, got:!!A.status, step:6},
     {key:"decision", label:"your decision date", pts:5,  got: needsDate ? !!A.decisionDate : !!A.status, step:6},
-    {key:"dd214",    label:"a DD214 photo",      pts:7,  got:!!A.docs.dd214, step:7},
+    {key:"dd214",    label:"your DD214 — photo or recovery", pts:7, got:!!A.docs.dd214 || A.dd214Status==="dont" || A.dd214Status==="never", step:7},
     {key:"valetter", label:"a VA letter photo",  pts:5,  got:!!A.docs.vaLetter, step:7}
   ];
 }
@@ -706,6 +757,31 @@ $("#docVALetter").addEventListener("click", ()=> $("#fileVALetter").click());
 $("#fileDD214").addEventListener("change", e => { if(e.target.files && e.target.files[0]) setDocReceived("dd214", e.target.files[0].name); });
 $("#fileVALetter").addEventListener("change", e => { if(e.target.files && e.target.files[0]) setDocReceived("vaLetter", e.target.files[0].name); });
 
+/* ---------- records recovery (no DD214? we've got it) ---------- */
+function refreshRecoveryUI(){
+  $$("[data-dd214]").forEach(t => t.setAttribute("aria-pressed", A.dd214Status===t.dataset.dd214 ? "true":"false"));
+  const recovering = (A.dd214Status==="dont" || A.dd214Status==="never");
+  $("#recoverPanel").classList.toggle("show", recovering);
+  $("#haveNote").hidden = A.dd214Status!=="have";
+  const sent = !!(A.recovery && A.recovery.archivesSent);
+  $("#btnArchives").disabled = sent;
+  $("#btnArchives").textContent = sent ? "✓ Archives request sent" : "Send my Archives request →";
+  $("#archivesSent").hidden = !sent;
+  $("#routeArchives").classList.toggle("sent", sent);
+}
+$$("[data-dd214]").forEach(tile => {
+  tile.addEventListener("click", ()=>{
+    A.dd214Status = tile.dataset.dd214;
+    refreshRecoveryUI(); save(); updateHUD();
+  });
+});
+$("#btnArchives").addEventListener("click", ()=>{
+  A.recovery = A.recovery || {archivesSent:false};
+  A.recovery.archivesSent = true;
+  refreshRecoveryUI(); save(); updateHUD();
+  showStamp("✓ Request sent");
+});
+
 /* ---------- speak instead (Web Speech API) ---------- */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 if(!SR){
@@ -790,12 +866,27 @@ function buildRecord(){
       claimed_conditions: A.conditions.slice(),
       documents_received: { dd214: !!A.docs.dd214, va_letter: !!A.docs.vaLetter }
     },
+    records_recovery: (A.dd214Status==="dont" || A.dd214Status==="never") ? {
+      needed: true,
+      reason: A.dd214Status==="never" ? "never received" : "not in veteran's possession",
+      routes: ["guided milConnect download", "National Archives eVetRecs request", "representative VA file pull"],
+      archives_request_sent: !!(A.recovery && A.recovery.archivesSent),
+      started_at: new Date().toISOString()
+    } : { needed: false },
     source: {
       document: "guided-intake (live demo)",
       extractor: "veteran self-report — guided intake",
       extracted_at: new Date().toISOString()
     }
   };
+}
+
+function docSummary(){
+  const parts = [];
+  if(A.docs.dd214) parts.push("DD214 photo ✓");
+  else if(A.dd214Status==="dont" || A.dd214Status==="never") parts.push("DD214 — recovery started ✓");
+  if(A.docs.vaLetter) parts.push("VA letter ✓");
+  return parts.join(" · ");
 }
 
 /* ---------- done screen ---------- */
@@ -814,6 +905,13 @@ function buildDone(){
     does += "<p>📷 <strong>Documents queued for reading:</strong> the system extracts the dates and ratings from your photo" +
       ((A.docs.dd214 && A.docs.vaLetter) ? "s" : "") + " — you never type what a document already says.</p>";
   }
+  if(A.dd214Status==="dont" || A.dd214Status==="never"){
+    does += "<p>🛟 <strong>Records Recovery: started ✓</strong> — your case moves forward now; the paper catches up." +
+      ((A.recovery && A.recovery.archivesSent)
+        ? " Your Archives request is already sent, and we&rsquo;re tracking it for you."
+        : " We&rsquo;ll walk you to your DD214 and file the Archives request for you.") +
+      "</p>";
+  }
   $("#doesBox").innerHTML = does;
 
   const condText = A.conditions.length
@@ -830,8 +928,7 @@ function buildDone(){
     {label:"Conditions",  val:condText, step:5},
     {label:"Claim status",val:A.status ? STATUS_LABEL[A.status] : "", step:6},
     {label:"Decision date", val:(A.status==="rated"||A.status==="denied") ? fmtDate(A.decisionDate) : "Not applicable yet", step:6},
-    {label:"Documents",   val:(A.docs.dd214||A.docs.vaLetter)
-        ? [A.docs.dd214?"DD214 ✓":null, A.docs.vaLetter?"VA letter ✓":null].filter(Boolean).join(" · ") : "", step:7}
+    {label:"Documents",   val:docSummary(), step:7}
   ];
   $("#summaryLines").innerHTML = "";
   lines.forEach(L => {
@@ -888,6 +985,7 @@ function applyAnswersToUI(){
   });
   if(A.docs.dd214) setDocReceived("dd214", A.docs.dd214);
   if(A.docs.vaLetter) setDocReceived("vaLetter", A.docs.vaLetter);
+  refreshRecoveryUI();
   updateHUD();
 }
 
@@ -973,9 +1071,10 @@ async function runAuto(){
   if(!await setField($("#inDecision"), "2026-10-06")) return;
   nextFrom(6); if(!await pause(1600)) return;
 
-  if(!await pulseEl($("#docDD214"))) return;
-  setDocReceived("dd214", "DD214-photo.jpg");
-  if(!await pause(1000)) return;
+  if(!await clickEl(document.querySelector('[data-dd214="dont"]'))) return;
+  if(!await pause(1500)) return;
+  if(!await clickEl($("#btnArchives"))) return;
+  if(!await pause(1400)) return;
   if(!await pulseEl($("#docVALetter"))) return;
   setDocReceived("vaLetter", "VA-decision-letter.jpg");
   if(!await pause(1100)) return;
@@ -1011,6 +1110,7 @@ $("#btnResume").addEventListener("click", ()=>{
   if(!s){ showStep(1); return; }
   A = Object.assign(freshAnswers(), s.A || {});
   A.docs = Object.assign({dd214:null, vaLetter:null}, (s.A||{}).docs || {});
+  A.recovery = Object.assign({archivesSent:false}, (s.A||{}).recovery || {});
   doneSteps = new Set(s.done || []);
   applyAnswersToUI();
   $("#resumeBox").classList.remove("show");

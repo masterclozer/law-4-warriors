@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Evidence Locker — Law 4 Warriors Demo</title>
+<style>
+  :root{
+    --navy:#0b1f3a; --navy-deep:#0d1420; --panel:#16202f; --gold:#c9a227; --gold-dark:#a8861c;
+    --ink:#1f2937; --muted:#5b6b82; --line:#d8dee8; --bg:#eef1f5;
+    --good:#1e7d4f; --good-bg:#e3f3ea; --wait:#8a6d1c; --wait-bg:#fdf6e0; --need:#6b7280; --need-bg:#eef1f5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.6}
+  .badge{background:var(--gold);color:var(--navy-deep);text-align:center;
+    padding:9px 14px;font-size:13px;letter-spacing:.14em;font-weight:700}
+  .badge span{font-weight:400;letter-spacing:.02em}
+  .badge a{color:var(--navy-deep)}
+  header{background:var(--navy-deep);border-bottom:4px solid var(--gold);padding:36px 20px 28px;text-align:center}
+  .brand{font-family:Georgia,"Times New Roman",serif;letter-spacing:.3em;color:var(--gold);
+    font-size:13px;text-transform:uppercase}
+  header h1{font-family:Georgia,"Times New Roman",serif;color:#fff;font-weight:400;font-size:34px;margin:12px 0 6px}
+  header p{color:#c3cfe0;margin:0 auto;max-width:660px;font-size:16px}
+  .wrap{max-width:920px;margin:0 auto;padding:28px 18px 60px}
+  .intro{background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold);
+    border-radius:6px;padding:18px 22px;margin-bottom:26px}
+  .intro p{margin:0 0 8px}
+  .intro p:last-child{margin-bottom:0}
+  h2.section{font-family:Georgia,serif;color:var(--navy);font-size:22px;
+    border-bottom:2px solid var(--gold);padding-bottom:6px;margin:34px 0 16px}
+  /* condition boards */
+  .board{background:#fff;border:1px solid var(--line);border-radius:8px;padding:20px 22px;margin-bottom:16px}
+  .board-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .board h3{font-family:Georgia,serif;color:var(--navy);margin:0;font-size:19px}
+  .board .dc{color:var(--muted);font-size:13.5px}
+  .board .pct{font-family:Georgia,serif;font-size:24px;color:var(--navy);white-space:nowrap}
+  .board .pct small{display:block;font-family:inherit;font-size:12px;color:var(--muted);text-align:right;letter-spacing:.06em}
+  .rbar{height:10px;background:#e4e9f0;border-radius:5px;overflow:hidden;margin:10px 0 14px}
+  .rbar>div{height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold))}
+  .slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+  .slot{border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+  .slot .lab{font-weight:700;color:var(--navy);font-size:14.5px;margin-bottom:4px}
+  .slot .det{font-size:13.5px;color:var(--muted)}
+  .chip{display:inline-block;border-radius:20px;padding:1px 10px;font-size:12px;font-weight:700;margin-bottom:6px}
+  .chip.ok{background:var(--good-bg);color:var(--good);border:1px solid #bfe3cf}
+  .chip.wait{background:var(--wait-bg);color:var(--wait);border:1px solid #ecd9a0}
+  .chip.need{background:var(--need-bg);color:var(--need);border:1px solid var(--line)}
+  /* generic cards */
+  .card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:22px 24px;margin-bottom:16px}
+  .card h3{font-family:Georgia,serif;color:var(--navy);margin:0 0 8px;font-size:20px}
+  .card p{margin:0 0 10px}
+  .card p.small,.small{color:var(--muted);font-size:14px}
+  /* phone mock */
+  .phone{max-width:420px;margin:14px auto;background:#f7f8fa;border:1px solid var(--line);
+    border-radius:18px;padding:16px 14px}
+  .phone .who{text-align:center;color:var(--muted);font-size:12.5px;margin-bottom:10px;letter-spacing:.04em}
+  .msg{border-radius:14px;padding:10px 13px;margin:8px 0;font-size:14.5px;max-width:88%}
+  .msg.them{background:#e5e7eb;color:var(--ink);border-bottom-left-radius:4px}
+  .msg.us{background:var(--navy);color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+  .msg .tap{display:inline-block;background:#fff;color:var(--navy);border:1px solid var(--navy);
+    border-radius:16px;padding:2px 12px;font-weight:700;margin:4px 4px 0 0;font-size:13.5px}
+  .msg .tap.on{background:var(--gold);border-color:var(--gold-dark);color:var(--navy-deep)}
+  /* statement card */
+  .statement{background:#fffdf5;border:1px solid #e3d9ae;border-radius:6px;padding:18px 20px;
+    font-family:Georgia,serif;font-size:14.5px;margin-top:14px}
+  .statement .sh{font-size:12px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;font-family:inherit}
+  .statement p{margin:8px 0}
+  .statement .sig{font-style:italic;margin-top:14px}
+  /* nexus checklist */
+  .packet{margin:6px 0 0;padding-left:20px}
+  .packet li{margin:5px 0}
+  .track{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .track span{border:1px solid var(--line);border-radius:20px;padding:3px 12px;font-size:13px;color:var(--muted);background:#fff}
+  .track span.done{background:var(--good-bg);color:var(--good);border-color:#bfe3cf;font-weight:600}
+  .track span.now{background:var(--wait-bg);color:var(--wait);border-color:#ecd9a0;font-weight:600}
+  /* diary log */
+  table.log{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:10px}
+  table.log td,table.log th{padding:7px 8px;border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top}
+  table.log th{color:var(--navy);font-family:Georgia,serif;font-weight:400}
+  /* drip timeline */
+  .drip{position:relative;margin:6px 0 0;padding-left:26px}
+  .drip::before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:2px;background:var(--gold)}
+  .drip .ev{position:relative;margin-bottom:18px}
+  .drip .ev::before{content:"";position:absolute;left:-24px;top:5px;width:14px;height:14px;border-radius:50%;
+    background:var(--navy);border:2px solid var(--gold)}
+  .drip .day{font-weight:700;color:var(--navy)}
+  footer{color:var(--muted);font-size:13.5px;text-align:center;padding:0 18px 40px;max-width:760px;margin:0 auto}
+  footer a{color:var(--navy)}
+</style>
+</head>
+<body>
+
+<div class="badge">LIVE DEMO — SAMPLE DATA ONLY <span>· Every name, record, and document in this demo is fictional</span> · <a href="index.html">Demo home</a></div>
+
+<header>
+  <div class="brand">Law 4 Warriors</div>
+  <h1>The Evidence Locker</h1>
+  <p>A VA claim is won or lost on evidence. The locker collects it as we go — one small ask at a time —
+     so the veteran is never handed a thirty-item homework list.</p>
+</header>
+
+<div class="wrap">
+
+  <div class="intro">
+    <p><strong>How it works:</strong> every condition in the claim needs the same three things —
+    <strong>① a current diagnosis</strong>, <strong>② what happened in service</strong>, and
+    <strong>③ the connection (nexus)</strong> between them. The locker tracks all three for every
+    condition in <strong>James R. Calloway&rsquo;s</strong> file, and the system quietly goes and gets
+    whatever is missing: records requests, buddy statements, doctor packets, and a symptom diary that
+    builds itself.</p>
+    <p class="small">This is the gap report from the decision analyzer, turned into a to-do list the
+    <em>system</em> works — not a pile of chores dumped on the veteran.</p>
+  </div>
+
+  <h2 class="section">Calloway&rsquo;s conditions — the three slots, per condition</h2>
+
+  <div class="board">
+    <div class="board-head"><h3>Posttraumatic stress disorder (PTSD)</h3><div class="pct">83%<small>EVIDENCE READY</small></div></div>
+    <div class="dc">Diagnostic code 9411 · rated 70% · VA increased the evaluation Oct 6, 2026</div>
+    <div class="rbar"><div style="width:83%"></div></div>
+    <div class="slots">
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">Current diagnosis</div><div class="det">VA treatment records confirm the diagnosis and current severity.</div></div>
+      <div class="slot"><span class="chip wait">⏳ Collecting</span><div class="lab">What happened in service</div><div class="det">His personal stressor statement is drafted from his own words; unit records requested to corroborate.</div></div>
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">The connection (nexus)</div><div class="det">The VA examiner linked the condition to service in the exam report.</div></div>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="board-head"><h3>Lumbosacral strain (back)</h3><div class="pct">100%<small>EVIDENCE READY</small></div></div>
+    <div class="dc">Diagnostic code 5237 · rated 20% · granted Oct 6, 2026</div>
+    <div class="rbar"><div style="width:100%"></div></div>
+    <div class="slots">
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">Current diagnosis</div><div class="det">Current treatment records on file.</div></div>
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">What happened in service</div><div class="det">In-service back injury documented in his service treatment records.</div></div>
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">The connection (nexus)</div><div class="det">Continuous symptoms documented since separation — the chain is closed.</div></div>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="board-head"><h3>Tinnitus</h3><div class="pct">100%<small>EVIDENCE READY</small></div></div>
+    <div class="dc">Diagnostic code 6260 · rated 10% · continued Oct 6, 2026</div>
+    <div class="rbar"><div style="width:100%"></div></div>
+    <div class="slots">
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">Current diagnosis</div><div class="det">Audiology exam confirms bilateral tinnitus.</div></div>
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">What happened in service</div><div class="det">Artillery noise exposure is part of his service record.</div></div>
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">The connection (nexus)</div><div class="det">Onset during service documented; examiner agreed.</div></div>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="board-head"><h3>Left knee — limitation of flexion</h3><div class="pct">67%<small>EVIDENCE READY</small></div></div>
+    <div class="dc">Diagnostic code 5260 · rated 0% · continued Oct 6, 2026</div>
+    <div class="rbar"><div style="width:67%"></div></div>
+    <div class="slots">
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">Current diagnosis</div><div class="det">Current range-of-motion measurements on file.</div></div>
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">What happened in service</div><div class="det">Treated for a knee injury in service — sick-call slips in his records.</div></div>
+      <div class="slot"><span class="chip wait">⏳ Collecting</span><div class="lab">The connection (nexus)</div><div class="det">A buddy statement is out for signature — Mike served with him and saw the injury happen.</div></div>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="board-head"><h3>Right knee instability</h3><div class="pct">33%<small>EVIDENCE READY</small></div></div>
+    <div class="dc">Diagnostic code 5257 · service connection denied Oct 6, 2026 — now on appeal</div>
+    <div class="rbar"><div style="width:33%"></div></div>
+    <div class="slots">
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">Current diagnosis</div><div class="det">His doctor documents the knee giving way several times a month.</div></div>
+      <div class="slot"><span class="chip need">○ Still needed</span><div class="lab">What happened in service</div><div class="det">Nothing in the service records mentions this knee — so a buddy statement becomes the evidence. Already requested.</div></div>
+      <div class="slot"><span class="chip need">○ Still needed</span><div class="lab">The connection (nexus)</div><div class="det">A nexus packet is being assembled for his doctor — see below.</div></div>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="board-head"><h3>Migraine headaches</h3><div class="pct">50%<small>EVIDENCE READY</small></div></div>
+    <div class="dc">Diagnostic code 8100 · decision deferred Oct 6, 2026 — VA wants more evidence</div>
+    <div class="rbar"><div style="width:50%"></div></div>
+    <div class="slots">
+      <div class="slot"><span class="chip wait">⏳ Collecting</span><div class="lab">Current diagnosis</div><div class="det">His symptom diary is building the picture — three weeks logged so far, and raters credit a diary kept as it happens.</div></div>
+      <div class="slot"><span class="chip ok">✓ In file</span><div class="lab">What happened in service</div><div class="det">Headaches treated in service — entries in his service treatment records.</div></div>
+      <div class="slot"><span class="chip need">○ Still needed</span><div class="lab">The connection (nexus)</div><div class="det">Comes after the diary — a doctor reviews the log and the service entries together.</div></div>
+    </div>
+  </div>
+
+  <h2 class="section">Buddy statements — nobody stares at a blank form</h2>
+  <div class="card">
+    <h3>The buddy gets a text, not a form</h3>
+    <p>James names a buddy at intake. The system texts that buddy his own two-minute tap-through —
+    and out comes a proper, signed statement in support of the claim.</p>
+    <div class="phone" aria-label="Sample text message to a buddy">
+      <div class="who">Text message · to Mike T. (served with James)</div>
+      <div class="msg them">Hi Mike, this is Law 4 Warriors. James Calloway is filing a VA claim and listed you as a witness from his Army days. It takes about 2 minutes to help him — tap here when you&rsquo;re ready: <u>law4warriors.example/buddy</u></div>
+    </div>
+    <p><strong>Mike&rsquo;s three taps:</strong></p>
+    <div class="phone" aria-label="Buddy three-tap flow">
+      <div class="who">Mike&rsquo;s mini-flow · 3 taps, about 2 minutes</div>
+      <div class="msg them">Did you serve with James Calloway?<br><span class="tap on">Yes ✓</span> <span class="tap">No</span></div>
+      <div class="msg them">What did you see? Tap all that fit — or tap the microphone and just say it.<br>
+        <span class="tap on">His knee gave out on runs ✓</span> <span class="tap on">He had headaches that put him down ✓</span> <span class="tap">He was in the blast in &rsquo;99</span> <span class="tap">🎤 Say it instead</span></div>
+      <div class="msg them">Last step — type your name to sign, and you&rsquo;re done. James&rsquo;s team thanks you.</div>
+      <div class="msg us">Michael Torres ✓ signed</div>
+    </div>
+    <div class="statement">
+      <div class="sh">Statement generated from Mike&rsquo;s taps — statement in support of claim</div>
+      <p>I, Michael Torres, served with James R. Calloway in the United States Army from 1998 to 2004.
+      I personally witnessed his knee give out on unit runs on multiple occasions, and I saw him laid low
+      by headaches that forced him to miss duty. I make this statement from my own memory, and it is true
+      to the best of my knowledge.</p>
+      <p class="sig">Signed: Michael Torres · October 18, 2026 · (fictional sample)</p>
+    </div>
+  </div>
+
+  <h2 class="section">The nexus packet — the doctor&rsquo;s job, made easy</h2>
+  <div class="card">
+    <h3>What the system assembles for the doctor</h3>
+    <p>When a nexus slot stays empty, the system doesn&rsquo;t just note it — it builds the packet that
+    closes it, and tracks it like a deadline:</p>
+    <ul class="packet">
+      <li><strong>A one-page records summary</strong> — the relevant service entries and current findings, in date order, so the doctor isn&rsquo;t handed 400 pages.</li>
+      <li><strong>The exact question</strong> — is this condition connected to his service?</li>
+      <li><strong>What a valid opinion must contain</strong> — the &ldquo;more likely than not&rdquo; standard, a medical rationale (not just a conclusion), and a statement that the records were reviewed.</li>
+      <li><strong>A blank statement form</strong> with the veteran&rsquo;s information already filled in.</li>
+    </ul>
+    <div class="track" aria-label="Nexus packet tracking">
+      <span class="done">✓ Packet assembled — Oct 14</span>
+      <span class="done">✓ Sent to his doctor — Oct 15</span>
+      <span class="now">⏳ Opinion expected — by Nov 5</span>
+      <span>Filed to the locker</span>
+    </div>
+    <p class="small" style="margin-top:12px">For Calloway&rsquo;s right knee: VA denied the connection because the
+    service records are silent. A doctor&rsquo;s reasoned opinion plus Mike&rsquo;s statement is exactly how that
+    denial gets answered on appeal.</p>
+  </div>
+
+  <h2 class="section">The symptom diary — evidence that builds itself</h2>
+  <div class="card">
+    <h3>A weekly two-tap text</h3>
+    <p>Migraines are rated on frequency and severity — and nobody remembers April&rsquo;s headaches in October.
+    So the system asks, weekly, while it&rsquo;s fresh:</p>
+    <div class="phone" aria-label="Sample symptom diary text thread">
+      <div class="who">Text message · Law 4 Warriors ↔ James</div>
+      <div class="msg them">Hi James — quick check-in, that&rsquo;s all. Migraines this week?<br><span class="tap">None</span> <span class="tap">1–2 days</span> <span class="tap on">3+ days ✓</span></div>
+      <div class="msg us">3+ days</div>
+      <div class="msg them">Got it, James — logged. That&rsquo;s another piece in place. Three weeks strong. 💪</div>
+    </div>
+    <table class="log" aria-label="Migraine diary log">
+      <tr><th>Week</th><th>Days lost</th><th>Note</th></tr>
+      <tr><td>Sep 28 – Oct 4</td><td>2 days</td><td>One prostrating — had to lie down in the dark</td></tr>
+      <tr><td>Oct 5 – Oct 11</td><td>3 days</td><td>Missed a family event; nausea noted</td></tr>
+      <tr><td>Oct 12 – Oct 18</td><td>3 days</td><td>Diary is now the exhibit for the deferred migraine decision</td></tr>
+    </table>
+  </div>
+
+  <h2 class="section">Collect as you go — the drip, not the dump</h2>
+  <div class="card">
+    <div class="drip">
+      <div class="ev"><span class="day">Day 1</span> — Welcome. His records requests fire automatically (DD214 recovery starts if he didn&rsquo;t have it). Nothing is asked of him but his intake answers.</div>
+      <div class="ev"><span class="day">Day 3</span> — Buddy links go out to the two names he gave us. One small thing — for <em>them</em>, not him.</div>
+      <div class="ev"><span class="day">Day 7</span> — First symptom check-in text. Two taps, ten seconds.</div>
+      <div class="ev"><span class="day">Day 14</span> — Nexus packet status lands in the locker; if the doctor hasn&rsquo;t answered, the companion follows up so the veteran doesn&rsquo;t have to.</div>
+      <div class="ev"><span class="day">Ongoing</span> — One small ask at a time, each one celebrated when it lands, until every slot on every board reads <strong>✓ In file</strong>.</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p><strong>Sample data only.</strong> James R. Calloway, his conditions, his buddy, and every message
+  shown here are fictional, invented for this demonstration. In the live system the locker reads and
+  writes the same master record that fills the VA forms.</p>
+  <p><a href="index.html">← Back to the demo home</a> · <a href="guided-intake.html">Guided Intake</a> · <a href="companion.html">Veteran Companion</a></p>
+</footer>
+
+</body>
+</html>

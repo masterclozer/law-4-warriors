@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veteran Companion — Law 4 Warriors Demo</title>
+<style>
+  :root{
+    --navy:#0b1f3a; --navy-deep:#0d1420; --panel:#16202f; --gold:#c9a227; --gold-dark:#a8861c;
+    --ink:#1f2937; --muted:#5b6b82; --line:#d8dee8; --bg:#eef1f5;
+    --good:#1e7d4f; --good-bg:#e3f3ea;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.6}
+  .badge{background:var(--gold);color:var(--navy-deep);text-align:center;
+    padding:9px 14px;font-size:13px;letter-spacing:.14em;font-weight:700}
+  .badge span{font-weight:400;letter-spacing:.02em}
+  .badge a{color:var(--navy-deep)}
+  header{background:var(--navy-deep);border-bottom:4px solid var(--gold);padding:36px 20px 28px;text-align:center}
+  .brand{font-family:Georgia,"Times New Roman",serif;letter-spacing:.3em;color:var(--gold);
+    font-size:13px;text-transform:uppercase}
+  header h1{font-family:Georgia,"Times New Roman",serif;color:#fff;font-weight:400;font-size:34px;margin:12px 0 6px}
+  header .tagline{font-family:Georgia,serif;font-style:italic;color:var(--gold);font-size:20px;margin:4px 0 10px}
+  header p{color:#c3cfe0;margin:0 auto;max-width:660px;font-size:16px}
+  .wrap{max-width:920px;margin:0 auto;padding:28px 18px 60px}
+  .intro{background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold);
+    border-radius:6px;padding:18px 22px;margin-bottom:26px}
+  .intro p{margin:0 0 8px}
+  .intro p:last-child{margin-bottom:0}
+  h2.section{font-family:Georgia,serif;color:var(--navy);font-size:22px;
+    border-bottom:2px solid var(--gold);padding-bottom:6px;margin:34px 0 16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:22px 24px;margin-bottom:16px}
+  .card h3{font-family:Georgia,serif;color:var(--navy);margin:0 0 8px;font-size:20px}
+  .card p{margin:0 0 10px}
+  .card p.small,.small{color:var(--muted);font-size:14px}
+  /* phone mock */
+  .phone{max-width:420px;margin:14px auto;background:#f7f8fa;border:1px solid var(--line);
+    border-radius:18px;padding:16px 14px}
+  .phone .who{text-align:center;color:var(--muted);font-size:12.5px;margin-bottom:10px;letter-spacing:.04em}
+  .msg{border-radius:14px;padding:10px 13px;margin:8px 0;font-size:14.5px;max-width:88%}
+  .msg.them{background:#e5e7eb;color:var(--ink);border-bottom-left-radius:4px}
+  .msg.us{background:var(--navy);color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+  .msg .tap{display:inline-block;background:#fff;color:var(--navy);border:1px solid var(--navy);
+    border-radius:16px;padding:2px 12px;font-weight:700;margin:4px 4px 0 0;font-size:13.5px}
+  .msg .tap.on{background:var(--gold);border-color:var(--gold-dark);color:var(--navy-deep)}
+  .daymark{text-align:center;color:var(--muted);font-size:12px;margin:14px 0 4px;letter-spacing:.06em}
+  /* audio cards */
+  .audiocard{background:var(--panel);border:1px solid #24334d;border-top:4px solid var(--gold);
+    border-radius:8px;padding:20px 22px;color:#e8edf5;margin-bottom:16px}
+  .audiocard h3{font-family:Georgia,serif;color:#fff;margin:0 0 6px;font-size:19px}
+  .audiocard p{color:#aeb9ca;font-size:14.5px;margin:0 0 12px}
+  .audiocard audio{width:100%}
+  .audiocard .script{background:var(--navy-deep);border-radius:6px;padding:12px 14px;color:#d7e3f4;
+    font-size:14px;font-style:italic;margin-top:12px}
+  .audiocard .script span{display:block;font-style:normal;color:var(--gold);font-size:11.5px;
+    letter-spacing:.12em;margin-bottom:4px}
+  /* ladder */
+  .ladder{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:6px}
+  .rung{background:#fff;border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:8px;padding:16px}
+  .rung .n{font-family:Georgia,serif;font-size:26px;color:var(--gold-dark)}
+  .rung h4{font-family:Georgia,serif;color:var(--navy);margin:4px 0 6px;font-size:16.5px}
+  .rung p{font-size:14px;color:var(--ink);margin:0}
+  /* guard rails */
+  .rails{background:var(--navy-deep);border-radius:8px;padding:22px 24px;color:#e8edf5;border-top:4px solid var(--gold)}
+  .rails h3{font-family:Georgia,serif;color:#fff;margin:0 0 10px;font-size:20px}
+  .rails ul{margin:0;padding-left:20px}
+  .rails li{margin:7px 0;color:#c3cfe0}
+  .rails li strong{color:#fff}
+  footer{color:var(--muted);font-size:13.5px;text-align:center;padding:0 18px 40px;max-width:760px;margin:0 auto}
+  footer a{color:var(--navy)}
+</style>
+</head>
+<body>
+
+<div class="badge">LIVE DEMO — SAMPLE DATA ONLY <span>· Every name, record, and document in this demo is fictional</span> · <a href="index.html">Demo home</a></div>
+
+<header>
+  <div class="brand">Law 4 Warriors</div>
+  <h1>Veteran Companion</h1>
+  <div class="tagline">&ldquo;A hand to hold, all the way to the decision.&rdquo;</div>
+  <p>The follow-up assistant that walks beside the veteran between intake and decision — kind,
+  patient, and persistent. It never nags and never guilt-trips. It just keeps the next small step
+  in front of him, and celebrates every one he finishes.</p>
+</header>
+
+<div class="wrap">
+
+  <div class="intro">
+    <p><strong>What it is:</strong> the deadline engine knows every date in the case. The Companion is
+    how those dates reach the veteran — as friendly texts and voice reminders that ask for
+    <strong>one small step at a time</strong>, framed by how far he&rsquo;s already come.</p>
+    <p><strong>How it talks:</strong> every finished piece is celebrated (&ldquo;Got it, James — that&rsquo;s
+    another piece in place&rdquo;). Every ask is measured against <em>his</em> finish line
+    (&ldquo;Three pieces left and your file is complete&rdquo;). And when life gets in the way, it
+    re-opens the door with zero guilt — because a veteran who feels backed keeps going, and a veteran
+    who feels chased disappears.</p>
+  </div>
+
+  <h2 class="section">What it sounds like — a week with James</h2>
+  <div class="card">
+    <div class="phone" aria-label="Sample text thread with the companion">
+      <div class="who">Text message · Law 4 Warriors ↔ James</div>
+
+      <div class="daymark">MONDAY</div>
+      <div class="msg them">Hi James, your team at Law 4 Warriors here. You&rsquo;re almost there — just one small piece left: your signature on the representative form. It takes about a minute, and then your file is complete.<br><span class="tap">DONE ✓</span> <span class="tap">NEED HELP</span></div>
+      <div class="msg us">DONE ✓</div>
+      <div class="msg them">Got it, James — that&rsquo;s another piece in place. 🙌 Your file is complete. We&rsquo;ll take it from here.</div>
+
+      <div class="daymark">WEDNESDAY — NO REPLY YESTERDAY</div>
+      <div class="msg them">Yesterday got away from us — no problem at all. One small thing today? Your VA exam is Saturday at 10 in the morning. Just reply YES if that still works, and we&rsquo;ll handle the rest.</div>
+      <div class="msg us">YES</div>
+      <div class="msg them">Perfect — you&rsquo;re all set for Saturday. Bring a photo ID and your medicine list. We&rsquo;ll check in after and see how it went.</div>
+
+      <div class="daymark">SUNDAY</div>
+      <div class="msg them">Quick check-in, that&rsquo;s all, James. Migraines this week?<br><span class="tap">None</span> <span class="tap">1–2 days</span> <span class="tap on">3+ days ✓</span></div>
+      <div class="msg us">3+ days</div>
+      <div class="msg them">Logged — thank you. Three weeks of diary now, and it&rsquo;s building a strong picture for your claim. One week at a time. 💪</div>
+    </div>
+    <p class="small">Notice what&rsquo;s missing: no warnings, no pressure, no word like &ldquo;overdue&rdquo; —
+    that word never appears in anything a veteran sees. Deadlines live in the firm&rsquo;s
+    <a href="digest.html">docket digest</a>. To the veteran, there is only progress and the next small step.</p>
+  </div>
+
+  <h2 class="section">Voice reminders — for veterans who don&rsquo;t read texts</h2>
+  <p class="small" style="margin-bottom:14px">Some veterans won&rsquo;t read a long text — eyesight, habit, or just a busy day.
+  So the Companion also <em>calls</em>, in a calm, friendly voice. These are real generated samples — press play.</p>
+
+  <div class="audiocard">
+    <h3>📞 The exam reminder call</h3>
+    <p>Played three days before a VA compensation exam — the appointment a missed claim often turns on.</p>
+    <audio controls preload="metadata" src="files/reminder-exam.mp3">Your browser does not support audio playback.</audio>
+    <div class="script"><span>WHAT IT SAYS</span>&ldquo;Hi James, your team at Law 4 Warriors here — just walking with you. Your VA exam is in three days, Saturday at ten in the morning, at the clinic in your letter. Bring a photo ID and your medicine list. One more piece in place, James. You&rsquo;ve got this.&rdquo;</div>
+  </div>
+
+  <div class="audiocard">
+    <h3>📞 The one-small-step call</h3>
+    <p>When a signature is the last piece standing between the veteran and a complete file.</p>
+    <audio controls preload="metadata" src="files/reminder-form.mp3">Your browser does not support audio playback.</audio>
+    <div class="script"><span>WHAT IT SAYS</span>&ldquo;Hi James, your team at Law 4 Warriors here. You&rsquo;re almost there — just one small piece left: your signature on the representative form. It takes about a minute, and then your file is complete. Tap the link in our text, or reply and we&rsquo;ll walk you through it. We&rsquo;re with you.&rdquo;</div>
+  </div>
+
+  <h2 class="section">If he goes quiet — the ladder leans in, gently</h2>
+  <div class="ladder">
+    <div class="rung"><div class="n">1</div><h4>A friendly text</h4>
+      <p>One small step, two-tap reply. Warm, short, easy to answer from a lock screen.</p></div>
+    <div class="rung"><div class="n">2</div><h4>An even simpler text</h4>
+      <p>Shorter, plainer, zero guilt — &ldquo;Yesterday got away from us. One small thing today?&rdquo;</p></div>
+    <div class="rung"><div class="n">3</div><h4>A voice call</h4>
+      <p>For the veteran who doesn&rsquo;t read texts, the assistant calls and says it out loud — like the samples above.</p></div>
+    <div class="rung"><div class="n">4</div><h4>A person checks in</h4>
+      <p>If he&rsquo;s still quiet, <strong>a person from the team checks in personally</strong> — a human call, because some moments need one.</p></div>
+  </div>
+  <p class="small" style="margin-top:12px">Nobody falls through silently. But nobody is ever made to feel like a problem, either —
+  every rung is an offer of help, not an alarm about him.</p>
+
+  <h2 class="section">The guard rails</h2>
+  <div class="rails">
+    <h3>Built in, not bolted on</h3>
+    <ul>
+      <li><strong>Consent first.</strong> The Companion only starts with the veteran&rsquo;s permission, captured at intake — and it stops the moment he says stop.</li>
+      <li><strong>Quiet hours.</strong> Nothing arrives before 9 in the morning or after 8 at night, in <em>his</em> time zone.</li>
+      <li><strong>Frequency caps.</strong> Never more than one message a day — and it pauses as soon as he replies. A conversation, not a drip campaign.</li>
+      <li><strong>Humans on the hard moments.</strong> Any confused, upset, or distressed reply routes straight to a person on the team, immediately. The assistant never tries to talk a veteran through a crisis.</li>
+      <li><strong>It knows its lane.</strong> The Companion never gives legal advice and never discusses ratings or outcomes — that&rsquo;s the lawyer&rsquo;s job. It handles steps, dates, and encouragement.</li>
+      <li><strong>Progress, not failures.</strong> It speaks only about what&rsquo;s been accomplished and what&rsquo;s next — never about what he&rsquo;s missed.</li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>
+  <p><strong>Sample data only.</strong> James R. Calloway and every message and recording here are
+  fictional, created for this demonstration. The voice reminders were generated with text-to-speech
+  in the same friendly register the live system uses.</p>
+  <p><a href="index.html">← Back to the demo home</a> · <a href="guided-intake.html">Guided Intake</a> · <a href="evidence-locker.html">The Evidence Locker</a></p>
+</footer>
+
+</body>
+</html>
