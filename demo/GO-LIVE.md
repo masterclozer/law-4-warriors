@@ -24,7 +24,7 @@ on a single box.
 
 | Option | Cost |
 |---|---|
-| Hetzner Cloud (small instance) | ~€4.50/month (≈ $5) |
+| DigitalOcean droplet (New York) | ~$12/month |
 | DigitalOcean (basic droplet) | $6/month |
 | Oracle Cloud Always Free tier | **$0** (real, but capacity/availability fine print — fine for a pilot, less ideal as the permanent home) |
 
@@ -82,7 +82,7 @@ allowing only web + SSH, automatic security updates on.
 | Item | Cost |
 |---|---|
 | Domain | ~$12 / year |
-| Server (Hetzner ≈ $5/mo or DigitalOcean $6/mo) | ~$60–72 / year |
+| Server (DigitalOcean, New York) | ~$144 / year |
 | HTTPS (Let's Encrypt) | $0 |
 | Backups (Backblaze B2) | pennies / month |
 | Adobe Acrobat Services (free tier) | $0 |
