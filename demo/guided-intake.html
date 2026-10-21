@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guided Intake — Law 4 Warriors Demo</title>
+<style>
+  :root{
+    --navy:#0b1f3a; --navy-deep:#0d1420; --panel:#16202f; --gold:#c9a227; --gold-dark:#a8861c;
+    --ink:#1f2937; --muted:#5b6b82; --line:#d8dee8; --bg:#eef1f5;
+    --good:#1e7d4f; --good-bg:#e3f3ea; --tile-on:#fdf6e0;
+  }
+  *{box-sizing:border-box}
+  html{font-size:16px}
+  html.big{font-size:19px}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.55}
+  .badge{background:var(--gold);color:var(--navy-deep);text-align:center;
+    padding:9px 14px;font-size:.82rem;letter-spacing:.14em;font-weight:700}
+  .badge span{font-weight:400;letter-spacing:.02em}
+
+  /* top bar */
+  .topbar{position:sticky;top:0;z-index:40;background:var(--navy-deep);border-bottom:3px solid var(--gold);
+    display:flex;align-items:center;gap:10px;padding:10px 14px}
+  .topbar .brand{font-family:Georgia,"Times New Roman",serif;letter-spacing:.22em;color:var(--gold);
+    font-size:.78rem;text-transform:uppercase;white-space:nowrap}
+  .topbar .spacer{flex:1}
+  .topbar a{color:#c3cfe0;text-decoration:none;font-size:.9rem;white-space:nowrap}
+  .topbar a:hover{color:#fff}
+  .tsize{display:flex;gap:6px}
+  .tsize button{background:var(--panel);color:#e8edf5;border:1px solid #3a4c6e;border-radius:6px;
+    min-width:44px;min-height:44px;font-size:1rem;cursor:pointer}
+  .tsize button[aria-pressed="true"]{background:var(--gold);color:var(--navy-deep);border-color:var(--gold-dark);font-weight:700}
+
+  .wrap{max-width:680px;margin:0 auto;padding:18px 14px 70px}
+
+  /* HUD: progress + readiness */
+  .hud{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+  .hud-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .hud-step{font-family:Georgia,serif;color:var(--navy);font-size:1.05rem;font-weight:700}
+  .hud-pct{color:var(--muted);font-size:.92rem;white-space:nowrap}
+  .bar{height:12px;background:#e4e9f0;border-radius:6px;overflow:hidden;margin:8px 0 6px}
+  .bar>div{height:100%;width:0;background:var(--navy);border-radius:6px;transition:width .5s ease}
+  .pips{display:flex;gap:5px;margin:4px 0 12px}
+  .pips span{flex:1;height:8px;border-radius:4px;background:#e4e9f0}
+  .pips span.done{background:var(--gold)}
+  .pips span.now{outline:2px solid var(--navy);outline-offset:1px}
+  .rbar{height:14px;background:#e4e9f0;border-radius:7px;overflow:hidden;margin-top:6px}
+  .rbar>div{height:100%;width:0;background:linear-gradient(90deg,var(--gold-dark),var(--gold));transition:width .5s ease}
+  .ready-label{font-weight:700;color:var(--navy)}
+  .ready-num{font-weight:700;color:var(--gold-dark)}
+  .milestone{min-height:1.4em;margin:10px 0 0;color:var(--good);font-weight:600;font-size:.98rem}
+
+  /* screens */
+  .screen{display:none}
+  .screen.active{display:block;animation:fadeUp .35s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .cardbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px 20px 20px}
+  .q{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:1.65rem;line-height:1.25;margin:0 0 8px}
+  .help{color:var(--muted);margin:0 0 18px;font-size:1rem}
+  .sublabel{font-weight:700;color:var(--navy);margin:18px 0 8px;font-size:1.02rem}
+  .sublabel:first-of-type{margin-top:2px}
+
+  label.flabel{display:block;font-weight:600;color:var(--navy);margin:14px 0 6px}
+  .big-input{width:100%;font-size:1.25rem;padding:14px 16px;min-height:60px;
+    border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+  .big-input:focus{outline:3px solid var(--gold);outline-offset:1px;border-color:var(--gold-dark)}
+  .fieldrow{display:flex;gap:10px;align-items:stretch}
+  .fieldrow .big-input{flex:1;min-width:0}
+  .mic{flex:0 0 auto;min-width:60px;min-height:60px;border-radius:10px;border:2px solid var(--gold-dark);
+    background:var(--gold);color:var(--navy-deep);font-size:1.35rem;cursor:pointer}
+  .mic.listening{background:#b3372c;border-color:#8c2a20;color:#fff;animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+  .mic-note{font-size:.88rem;color:var(--muted);margin:6px 0 0}
+
+  /* tiles */
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tiles.one{grid-template-columns:1fr}
+  .tile{min-height:64px;font-size:1.12rem;font-family:inherit;text-align:left;cursor:pointer;
+    background:#fff;border:2px solid var(--line);border-radius:10px;padding:14px 16px;color:var(--ink);
+    display:flex;align-items:center;gap:10px;width:100%}
+  .tile:hover{border-color:var(--gold-dark)}
+  .tile:focus-visible,.btn:focus-visible,.mic:focus-visible,.tsize button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .tile[aria-pressed="true"]{border-color:var(--gold-dark);background:var(--tile-on);font-weight:700;color:var(--navy)}
+  .tile[aria-pressed="true"]::after{content:"✓";margin-left:auto;color:var(--good);font-weight:800;font-size:1.25rem}
+  .tile .emoji{font-size:1.4rem}
+  .yn{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .yn .tile{min-height:84px;font-size:1.25rem;justify-content:center;text-align:center}
+  .selcount{color:var(--muted);font-size:.95rem;margin:10px 0 0}
+
+  /* steppers */
+  .stepper{display:flex;align-items:center;gap:14px;margin:6px 0 4px}
+  .stepper button{width:64px;height:64px;flex:0 0 auto;font-size:2rem;line-height:1;border-radius:10px;
+    border:2px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer}
+  .stepper button:active{background:var(--gold);color:var(--navy-deep);border-color:var(--gold-dark)}
+  .stepper .yr{flex:1;text-align:center;font-size:1.9rem;font-weight:700;color:var(--navy);
+    border:2px dashed var(--line);border-radius:10px;padding:8px 4px;min-height:64px;
+    display:flex;align-items:center;justify-content:center}
+  .stepper .yr.set{border-style:solid;border-color:var(--gold-dark);background:var(--tile-on)}
+  .stepper .yr small{font-size:.95rem;color:var(--muted);font-weight:400}
+
+  /* actions */
+  .actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+  .btn{font-family:inherit;cursor:pointer;border-radius:10px;border:2px solid var(--navy);
+    min-height:60px;padding:12px 20px;font-size:1.12rem;background:#fff;color:var(--navy)}
+  .btn-primary{flex:1;background:var(--navy);color:#fff;font-weight:700;min-width:150px}
+  .btn-primary:hover{background:var(--gold);color:var(--navy-deep);border-color:var(--gold-dark)}
+  .btn-gold{flex:1;background:var(--gold);color:var(--navy-deep);border-color:var(--gold-dark);font-weight:700;min-width:150px}
+  .btn-gold:hover{background:#fff}
+  .btn-skip{color:var(--muted);border-color:var(--line)}
+  .editnote{background:var(--tile-on);border:1px solid var(--gold);border-radius:8px;
+    padding:10px 14px;margin-bottom:14px;font-size:.95rem;color:var(--navy)}
+
+  /* documents */
+  .doc-tile{flex-direction:column;align-items:flex-start;gap:4px;min-height:96px}
+  .doc-tile .t{font-size:1.2rem;font-weight:700;color:var(--navy)}
+  .doc-tile .s{font-size:.95rem;color:var(--muted);font-weight:400}
+  .doc-tile.received{border-color:var(--good);background:var(--good-bg)}
+  .doc-tile.received .s{color:var(--good);font-weight:600}
+
+  /* stamp */
+  .stamp{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:80;pointer-events:none}
+  .stamp.show{display:flex}
+  .stamp .seal{border:4px solid var(--good);color:var(--good);background:rgba(255,255,255,.92);
+    font-family:Georgia,serif;font-weight:700;font-size:1.7rem;letter-spacing:.06em;
+    padding:16px 30px;border-radius:10px;transform:rotate(-7deg);animation:stampIn .45s ease}
+  @keyframes stampIn{0%{transform:rotate(-7deg) scale(2.1);opacity:0}60%{transform:rotate(-7deg) scale(.95);opacity:1}100%{transform:rotate(-7deg) scale(1)}}
+
+  /* autoplay bar */
+  .autobar{display:none;background:var(--navy);color:#fff;border-radius:10px;padding:12px 16px;
+    margin-bottom:14px;align-items:center;gap:12px}
+  .autobar.show{display:flex}
+  .autobar p{margin:0;flex:1;font-size:.98rem}
+  .autobar button{background:var(--gold);border:1px solid var(--gold-dark);color:var(--navy-deep);
+    border-radius:8px;min-height:44px;padding:8px 16px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .auto-pulse{outline:4px solid var(--gold)!important;outline-offset:3px}
+
+  /* resume */
+  .resume{display:none;background:var(--panel);color:#e8edf5;border-radius:10px;padding:16px 18px;margin-bottom:16px}
+  .resume.show{display:block}
+  .resume p{margin:0 0 12px}
+  .resume .row{display:flex;gap:10px;flex-wrap:wrap}
+  .resume button{font-family:inherit;cursor:pointer;border-radius:8px;min-height:48px;padding:10px 16px;font-size:1rem}
+  .resume .go{background:var(--gold);border:1px solid var(--gold-dark);color:var(--navy-deep);font-weight:700}
+  .resume .over{background:transparent;border:1px solid #3a4c6e;color:#c3cfe0}
+
+  /* done screen */
+  .score-wrap{text-align:center;padding:8px 0 4px}
+  .score-num{font-family:Georgia,serif;font-size:3.4rem;color:var(--navy);line-height:1}
+  .score-cap{color:var(--muted);margin-top:4px}
+  .does{background:var(--good-bg);border:1px solid #bfe3cf;border-radius:10px;padding:14px 18px;margin:16px 0}
+  .does p{margin:0 0 6px}
+  .does p:last-child{margin-bottom:0}
+  .summary-line{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;
+    text-align:left;background:#fff;border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;margin-bottom:9px;font-size:1.03rem;font-family:inherit;cursor:pointer;color:var(--ink)}
+  .summary-line:hover{border-color:var(--gold-dark)}
+  .summary-line .lab{font-weight:700;color:var(--navy);flex:0 0 34%}
+  .summary-line .val{flex:1;color:var(--ink)}
+  .summary-line .val.missing{color:var(--muted);font-style:italic}
+  .summary-line .fix{color:var(--gold-dark);font-weight:700;white-space:nowrap}
+  .boost{background:var(--tile-on);border:1px solid var(--gold);border-radius:10px;padding:14px 18px;margin:16px 0}
+  .boost h3{font-family:Georgia,serif;color:var(--navy);margin:0 0 8px;font-size:1.15rem}
+  .boost ul{margin:0;padding-left:20px}
+  .boost li{margin:4px 0}
+  details.jsonbox{margin-top:18px}
+  details.jsonbox summary{cursor:pointer;font-weight:700;color:var(--navy);padding:8px 0}
+  details.jsonbox pre{background:var(--navy-deep);color:#d7e3f4;border-radius:10px;padding:16px;
+    overflow:auto;font-size:.82rem;line-height:1.45;max-height:420px}
+  footer{color:var(--muted);font-size:.9rem;text-align:center;padding:0 14px 40px;max-width:680px;margin:0 auto}
+  footer a{color:var(--navy)}
+  @media (max-width:480px){
+    .tiles{grid-template-columns:1fr}
+    .yn{grid-template-columns:1fr 1fr}
+    .q{font-size:1.45rem}
+    .summary-line .lab{flex-basis:40%}
+  }
+</style>
+</head>
+<body>
+
+<div class="badge">LIVE DEMO — SAMPLE DATA ONLY <span>· Every name, record, and document in this demo is fictional</span></div>
+
+<div class="topbar">
+  <div class="brand">Law 4 Warriors</div>
+  <div class="spacer"></div>
+  <div class="tsize" role="group" aria-label="Text size">
+    <button type="button" id="tsNormal" aria-pressed="true" aria-label="Normal text size">A</button>
+    <button type="button" id="tsBig" aria-pressed="false" aria-label="Larger text size">A+</button>
+  </div>
+  <a href="index.html">Demo home</a>
+</div>
+
+<div class="wrap">
+
+  <div class="autobar" id="autoBar" role="status">
+    <p>▶ <strong>Showing the sample veteran.</strong> Sit back and watch — or tap anywhere to take over.</p>
+    <button type="button" id="btnStopAuto">Stop</button>
+  </div>
+
+  <div class="hud" aria-label="Your progress">
+    <div class="hud-row">
+      <span class="hud-step" id="hudStep">Welcome</span>
+      <span class="hud-pct" id="hudPct">0% complete</span>
+    </div>
+    <div class="bar" role="progressbar" aria-label="Intake progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progBar"><div id="barFill"></div></div>
+    <div class="pips" id="pips" aria-hidden="true"></div>
+    <div class="hud-row">
+      <span class="ready-label">📁 File Readiness</span>
+      <span class="ready-num" id="readyPct">0%</span>
+    </div>
+    <div class="rbar" role="progressbar" aria-label="File readiness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="readyBar"><div id="readyFill"></div></div>
+    <p class="milestone" id="milestone" aria-live="polite"></p>
+  </div>
+
+  <div class="resume" id="resumeBox">
+    <p><strong>Welcome back.</strong> We saved your answers on this device, right where you left off.</p>
+    <div class="row">
+      <button type="button" class="go" id="btnResume">Pick up where I left off</button>
+      <button type="button" class="over" id="btnStartOver">Start over</button>
+    </div>
+  </div>
+
+  <!-- STEP 0 · START -->
+  <section class="screen active" id="screen-0" aria-labelledby="q0">
+    <div class="cardbox">
+      <h2 class="q" id="q0" tabindex="-1">Let&rsquo;s build your case file — by tapping, not typing.</h2>
+      <p class="help">Eight short steps, big buttons, plain questions. You can <strong>talk instead of
+      type</strong>, skip anything you&rsquo;re not sure of, and stop and come back anytime — it saves
+      as you go. Most veterans finish in about three minutes.</p>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="btnStart">Start the intake →</button>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-gold" id="btnAuto">▶ Watch it fill itself (sample veteran)</button>
+      </div>
+      <p class="help" style="margin:14px 0 0">Showing the firm? Tap <strong>Watch it fill itself</strong> —
+      a fictional veteran, James R. Calloway, completes the whole intake in about a minute.
+      Tap anywhere to take over at any point.</p>
+    </div>
+  </section>
+
+  <!-- STEP 1 · NAME -->
+  <section class="screen" id="screen-1" aria-labelledby="q1">
+    <div class="cardbox">
+      <div class="editnote" hidden>✏️ You&rsquo;re fixing this section — tap <strong>Next</strong> when you&rsquo;re done and you&rsquo;ll go straight back to your case file.</div>
+      <h2 class="q" id="q1" tabindex="-1">First — what should we call you?</h2>
+      <p class="help">Your full legal name, the way it appears on your VA paperwork.</p>
+      <label class="flabel" for="inName">Full name</label>
+      <div class="fieldrow">
+        <input class="big-input" id="inName" type="text" autocomplete="name" placeholder="e.g., James R. Calloway">
+        <button type="button" class="mic" data-mic="inName" aria-label="Speak your name instead of typing">🎤</button>
+      </div>
+      <p class="mic-note">🎤 Tap the microphone and just say it — no typing needed.</p>
+      <div class="actions">
+        <button type="button" class="btn" data-back="1">← Back</button>
+        <button type="button" class="btn btn-skip" data-skip="1">Skip for now</button>
+        <button type="button" class="btn btn-primary" data-next="1">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 2 · CONTACT -->
+  <section class="screen" id="screen-2" aria-labelledby="q2">
+    <div class="cardbox">
+      <div class="editnote" hidden>✏️ You&rsquo;re fixing this section — tap <strong>Next</strong> when you&rsquo;re done and you&rsquo;ll go straight back to your case file.</div>
+      <h2 class="q" id="q2" tabindex="-1">How can the firm reach you?</h2>
+      <p class="help">A phone number is the big one. That&rsquo;s how the firm calls with news about your case.</p>
+      <label class="flabel" for="inPhone">Cell phone</label>
+      <div class="fieldrow">
+        <input class="big-input" id="inPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(555) 555-0100">
+        <button type="button" class="mic" data-mic="inPhone" aria-label="Speak your phone number instead of typing">🎤</button>
+      </div>
+      <p class="sublabel">Do you have an email address?</p>
+      <div class="yn" role="group" aria-label="Do you have an email address?">
+        <button type="button" class="tile" id="ynEmailYes" aria-pressed="false">Yes, I do</button>
+        <button type="button" class="tile" id="ynEmailNo" aria-pressed="false">No — that&rsquo;s fine</button>
+      </div>
+      <div id="emailWrap" hidden>
+        <label class="flabel" for="inEmail">Email address</label>
+        <div class="fieldrow">
+          <input class="big-input" id="inEmail" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com">
+          <button type="button" class="mic" data-mic="inEmail" aria-label="Speak your email address instead of typing">🎤</button>
+        </div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn" data-back="2">← Back</button>
+        <button type="button" class="btn btn-skip" data-skip="2">Skip for now</button>
+        <button type="button" class="btn btn-primary" data-next="2">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3 · BIRTHDAY -->
+  <section class="screen" id="screen-3" aria-labelledby="q3">
+    <div class="cardbox">
+      <div class="editnote" hidden>✏️ You&rsquo;re fixing this section — tap <strong>Next</strong> when you&rsquo;re done and you&rsquo;ll go straight back to your case file.</div>
+      <h2 class="q" id="q3" tabindex="-1">What&rsquo;s your birthday?</h2>
+      <p class="help">The VA matches your file by your date of birth. It&rsquo;s also the one thing a
+      decision letter never shows — so this thirty seconds saves the firm a phone call later.</p>
+      <label class="flabel" for="inDob">Date of birth</label>
+      <input class="big-input" id="inDob" type="date" aria-label="Date of birth">
+      <div class="actions">
+        <button type="button" class="btn" data-back="3">← Back</button>
+        <button type="button" class="btn btn-skip" data-skip="3">Not sure — skip for now</button>
+        <button type="button" class="btn btn-primary" data-next="3">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 4 · SERVICE -->
+  <section class="screen" id="screen-4" aria-labelledby="q4">
+    <div class="cardbox">
+      <div class="editnote" hidden>✏️ You&rsquo;re fixing this section — tap <strong>Next</strong> when you&rsquo;re done and you&rsquo;ll go straight back to your case file.</div>
+      <h2 class="q" id="q4" tabindex="-1">Tell us about your service</h2>
+      <p class="help">Just tap your branch and your era, then tap the years in. Close is fine — the firm confirms exact dates from your DD214.</p>
+      <p class="sublabel">Branch of service</p>
+      <div class="tiles" id="branchTiles" role="group" aria-label="Branch of service">
+        <button type="button" class="tile" data-single="branch" data-value="United States Army" aria-pressed="false"><span class="emoji">🪖</span> Army</button>
+        <button type="button" class="tile" data-single="branch" data-value="United States Navy" aria-pressed="false"><span class="emoji">⚓</span> Navy</button>
+        <button type="button" class="tile" data-single="branch" data-value="United States Marine Corps" aria-pressed="false"><span class="emoji">🦅</span> Marines</button>
+        <button type="button" class="tile" data-single="branch" data-value="United States Air Force" aria-pressed="false"><span class="emoji">✈️</span> Air Force</button>
+        <button type="button" class="tile" data-single="branch" data-value="United States Space Force" aria-pressed="false"><span class="emoji">🛰️</span> Space Force</button>
+        <button type="button" class="tile" data-single="branch" data-value="United States Coast Guard" aria-pressed="false"><span class="emoji">🛟</span> Coast Guard</button>
+      </div>
+      <p class="sublabel">Service era</p>
+      <div class="tiles" id="eraTiles" role="group" aria-label="Service era">
+        <button type="button" class="tile" data-single="era" data-value="Vietnam Era" aria-pressed="false">Vietnam Era</button>
+        <button type="button" class="tile" data-single="era" data-value="Gulf War Era" aria-pressed="false">Gulf War Era</button>
+        <button type="button" class="tile" data-single="era" data-value="Post-9/11 Era" aria-pressed="false">Post-9/11 (Iraq / Afghanistan)</button>
+        <button type="button" class="tile" data-single="era" data-value="Peacetime / Other" aria-pressed="false">Peacetime / Other</button>
+      </div>
+      <p class="sublabel">Year you entered service</p>
+      <div class="stepper">
+        <button type="button" data-stepbtn="entryYear" data-dir="-1" aria-label="Earlier entry year">−</button>
+        <div class="yr" id="dispEntry"><small>tap + to set</small></div>
+        <button type="button" data-stepbtn="entryYear" data-dir="1" aria-label="Later entry year">+</button>
+      </div>
+      <p class="sublabel">Year you separated</p>
+      <div class="stepper">
+        <button type="button" data-stepbtn="sepYear" data-dir="-1" aria-label="Earlier separation year">−</button>
+        <div class="yr" id="dispSep"><small>tap + to set</small></div>
+        <button type="button" data-stepbtn="sepYear" data-dir="1" aria-label="Later separation year">+</button>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn" data-back="4">← Back</button>
+        <button type="button" class="btn btn-skip" data-skip="4">Not sure — skip for now</button>
+        <button type="button" class="btn btn-primary" data-next="4">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 5 · CONDITIONS -->
+  <section class="screen" id="screen-5" aria-labelledby="q5">
+    <div class="cardbox">
+      <div class="editnote" hidden>✏️ You&rsquo;re fixing this section — tap <strong>Next</strong> when you&rsquo;re done and you&rsquo;ll go straight back to your case file.</div>
+      <h2 class="q" id="q5" tabindex="-1">What are you dealing with?</h2>
+      <p class="help">Tap everything that applies — as many as you need. This list is what your claim gets built from, so if it hurts or it limits you, tap it.</p>
+      <div class="tiles" id="condTiles" role="group" aria-label="Your conditions — tap all that apply">
+        <button type="button" class="tile" data-cond="PTSD" aria-pressed="false">PTSD</button>
+        <button type="button" class="tile" data-cond="Tinnitus" aria-pressed="false">Tinnitus (ringing ears)</button>
+        <button type="button" class="tile" data-cond="Back" aria-pressed="false">Back problems</button>
+        <button type="button" class="tile" data-cond="Knees" aria-pressed="false">Knees</button>
+        <button type="button" class="tile" data-cond="Shoulders" aria-pressed="false">Shoulders</button>
+        <button type="button" class="tile" data-cond="Migraines" aria-pressed="false">Migraines</button>
+        <button type="button" class="tile" data-cond="Hearing loss" aria-pressed="false">Hearing loss</button>
+        <button type="button" class="tile" data-cond="Sleep apnea" aria-pressed="false">Sleep apnea</button>
+        <button type="button" class="tile" data-cond="Diabetes" aria-pressed="false">Diabetes</button>
+        <button type="button" class="tile" data-cond="Scars" aria-pressed="false">Scars</button>
+        <button type="button" class="tile" data-cond="__other" aria-pressed="false">Something else…</button>
+      </div>
+      <p class="selcount" id="condCount" aria-live="polite"></p>
+      <div id="otherWrap" hidden>
+        <label class="flabel" for="inOther">What else?</label>
+        <div class="fieldrow">
+          <input class="big-input" id="inOther" type="text" placeholder="Say it or type it — plain words are fine">
+          <button type="button" class="mic" data-mic="inOther" aria-label="Speak the condition instead of typing">🎤</button>
+        </div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn" data-back="5">← Back</button>
+        <button type="button" class="btn btn-skip" data-skip="5">Skip for now</button>
+        <button type="button" class="btn btn-primary" data-next="5">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 6 · WHERE THINGS STAND -->
+  <section class="screen" id="screen-6" aria-labelledby="q6">
+    <div class="cardbox">
+      <div class="editnote" hidden>✏️ You&rsquo;re fixing this section — tap <strong>Next</strong> when you&rsquo;re done and you&rsquo;ll go straight back to your case file.</div>
+      <h2 class="q" id="q6" tabindex="-1">Where does your claim stand today?</h2>
+      <p class="help">Be honest — every one of these is a normal place to start, and it&rsquo;s exactly what the firm needs to know.</p>
+      <div class="tiles one" id="statusTiles" role="group" aria-label="Where your claim stands">
+        <button type="button" class="tile" data-single="status" data-value="rated" aria-pressed="false">I have a rating — but it&rsquo;s too low or incomplete</button>
+        <button type="button" class="tile" data-single="status" data-value="denied" aria-pressed="false">I filed — and I was denied</button>
+        <button type="button" class="tile" data-single="status" data-value="never" aria-pressed="false">I never filed</button>
+        <button type="button" class="tile" data-single="status" data-value="unsure" aria-pressed="false">Not sure</button>
+      </div>
+      <div id="decisionWrap" hidden>
+        <label class="flabel" for="inDecision">Date on your VA decision letter</label>
+        <p class="help" style="margin-bottom:8px">Best guess is fine. This date starts your one-year appeal clock — the most important deadline in your case.</p>
+        <input class="big-input" id="inDecision" type="date" aria-label="Date on your VA decision letter">
+      </div>
+      <div class="actions">
+        <button type="button" class="btn" data-back="6">← Back</button>
+        <button type="button" class="btn btn-skip" data-skip="6">Skip for now</button>
+        <button type="button" class="btn btn-primary" data-next="6">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 7 · DOCUMENTS -->
+  <section class="screen" id="screen-7" aria-labelledby="q7">
+    <div class="cardbox">
+      <div class="editnote" hidden>✏️ You&rsquo;re fixing this section — tap <strong>Next</strong> when you&rsquo;re done and you&rsquo;ll go straight back to your case file.</div>
+      <h2 class="q" id="q7" tabindex="-1">Got paperwork handy? Snap it — don&rsquo;t type it.</h2>
+      <p class="help">Take a photo and you&rsquo;re done. Our system reads the document and pulls the
+      dates, ratings, and deadlines out for you.</p>
+      <div class="tiles one">
+        <button type="button" class="tile doc-tile" id="docDD214">
+          <span class="t">📷 Snap a photo of your DD214</span>
+          <span class="s" id="docDD214State">Proves your service, dates, and branch</span>
+        </button>
+        <button type="button" class="tile doc-tile" id="docVALetter">
+          <span class="t">📷 Snap a photo of your VA letter</span>
+          <span class="s" id="docVALetterState">A rating decision or denial letter, if you have one</span>
+        </button>
+      </div>
+      <input type="file" id="fileDD214" accept="image/*" capture="environment" hidden aria-label="Photo of your DD214">
+      <input type="file" id="fileVALetter" accept="image/*" capture="environment" hidden aria-label="Photo of your VA letter">
+      <p class="help" style="margin-top:14px">No paperwork handy? Skip this — with your permission, the firm can request your records directly.</p>
+      <div class="actions">
+        <button type="button" class="btn" data-back="7">← Back</button>
+        <button type="button" class="btn btn-skip" data-skip="7">Skip for now</button>
+        <button type="button" class="btn btn-primary" data-next="7">Build my case file →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 8 · DONE -->
+  <section class="screen" id="screen-8" aria-labelledby="q8">
+    <div class="cardbox">
+      <h2 class="q" id="q8" tabindex="-1">✓ Case File Built</h2>
+      <p class="help">Here&rsquo;s everything you told us, in plain language. <strong>Tap any line to fix it</strong> — nothing is final until you say so.</p>
+      <div class="score-wrap">
+        <div class="score-num" id="finalScore">0%</div>
+        <div class="score-cap">File Readiness — how complete this file is for the firm to act on</div>
+      </div>
+      <div class="does" id="doesBox"></div>
+      <div id="summaryLines"></div>
+      <div class="boost" id="boostBox" hidden>
+        <h3>Boost your file</h3>
+        <p style="margin:0 0 6px">A few things would make this file stronger. None of them stop the firm from starting:</p>
+        <ul id="boostList"></ul>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn" id="btnDoneOver">Start over</button>
+        <a class="btn btn-primary" href="index.html" style="text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">Back to demo home</a>
+      </div>
+      <details class="jsonbox">
+        <summary>See the record (for the technical eye)</summary>
+        <p class="help" style="margin-top:8px">This is the master record the intake just built — the same record that fills the VA forms.
+        Data entered once, used everywhere.</p>
+        <pre id="jsonView">{}</pre>
+      </details>
+    </div>
+  </section>
+
+</div>
+
+<div class="stamp" id="stamp" aria-hidden="true"><div class="seal" id="stampText">✓ Section filed</div></div>
+
+<footer>
+  <p><strong>Sample data only.</strong> This guided intake is a demonstration. In the live system,
+  answers are encrypted, stored on the firm&rsquo;s own server, and used to build the veteran&rsquo;s
+  master record — the single record that fills every VA form. Nothing typed or photographed here
+  leaves this browser.</p>
+  <p><a href="index.html">← Back to the demo home</a> · <a href="../index.html">Law 4 Warriors homepage</a></p>
+</footer>
+
+<script>
+"use strict";
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const KEY = "l4w-guided-intake-v1";
+
+const STEP_NAMES = ["Welcome","Your name","How we reach you","Your birthday","Your service","Your conditions","Where things stand","Your documents","Your case file"];
+const COND_META = {
+  "PTSD":        {name:"Posttraumatic stress disorder (PTSD)", code:"9411"},
+  "Tinnitus":    {name:"Tinnitus", code:"6260"},
+  "Back":        {name:"Lumbosacral strain", code:"5237"},
+  "Knees":       {name:"Knee limitation of flexion", code:"5260"},
+  "Shoulders":   {name:"Shoulder limitation of motion", code:"5201"},
+  "Migraines":   {name:"Migraine headaches", code:"8100"},
+  "Hearing loss":{name:"Hearing loss", code:"6100"},
+  "Sleep apnea": {name:"Sleep apnea", code:"6847"},
+  "Diabetes":    {name:"Diabetes mellitus", code:"7913"},
+  "Scars":       {name:"Scars", code:"7804"}
+};
+const STATUS_LABEL = {
+  rated:"Has a VA rating (too low or incomplete)",
+  denied:"Filed and was denied",
+  never:"Never filed",
+  unsure:"Not sure where things stand"
+};
+
+function freshAnswers(){
+  return { name:"", phone:"", email:"", emailNA:false, dob:"",
+    branch:"", era:"", entryYear:null, sepYear:null,
+    conditions:[], other:"", status:"", decisionDate:"",
+    docs:{ dd214:null, vaLetter:null }, vaFile:"", combined:null };
+}
+let A = freshAnswers();
+let current = 0;
+let doneSteps = new Set();
+let returnToSummary = false;
+let auto = { on:false };
+
+/* ---------- persistence ---------- */
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify({A:A, current:current, done:Array.from(doneSteps)})); }catch(e){}
+}
+function loadSaved(){
+  try{ const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+function wipe(){ try{ localStorage.removeItem(KEY); }catch(e){} }
+
+/* ---------- HUD ---------- */
+function readinessItems(){
+  const needsDate = (A.status==="rated" || A.status==="denied");
+  return [
+    {key:"name",     label:"your name",          pts:10, got:!!A.name.trim(), step:1},
+    {key:"phone",    label:"a phone number",     pts:8,  got:A.phone.replace(/\D/g,"").length>=7, step:2},
+    {key:"email",    label:"your email answer",  pts:7,  got:(/.+@.+\..+/.test(A.email) || A.emailNA), step:2},
+    {key:"dob",      label:"your birthday",      pts:10, got:!!A.dob, step:3},
+    {key:"branch",   label:"your branch",        pts:10, got:!!A.branch, step:4},
+    {key:"era",      label:"your service era",   pts:5,  got:!!A.era, step:4},
+    {key:"years",    label:"your service years", pts:8,  got:!!(A.entryYear && A.sepYear), step:4},
+    {key:"conds",    label:"your conditions",    pts:15, got:A.conditions.length>0, step:5},
+    {key:"status",   label:"where your claim stands", pts:10, got:!!A.status, step:6},
+    {key:"decision", label:"your decision date", pts:5,  got: needsDate ? !!A.decisionDate : !!A.status, step:6},
+    {key:"dd214",    label:"a DD214 photo",      pts:7,  got:!!A.docs.dd214, step:7},
+    {key:"valetter", label:"a VA letter photo",  pts:5,  got:!!A.docs.vaLetter, step:7}
+  ];
+}
+function computeReadiness(){
+  return readinessItems().reduce((sum,it)=> sum + (it.got ? it.pts : 0), 0);
+}
+let lastBand = -1;
+function updateHUD(){
+  const pct = current===8 ? 100 : Math.round(doneSteps.size/7*100);
+  $("#hudStep").textContent = STEP_NAMES[current] || "";
+  $("#hudPct").textContent = pct + "% complete";
+  $("#barFill").style.width = pct + "%";
+  $("#progBar").setAttribute("aria-valuenow", pct);
+  const pips = $("#pips").children;
+  for(let i=0;i<pips.length;i++){
+    pips[i].className = (i+1<=doneSteps.size || current===8) ? "done" : ((i+1)===current ? "now" : "");
+  }
+  const r = computeReadiness();
+  $("#readyPct").textContent = r + "%";
+  $("#readyFill").style.width = r + "%";
+  $("#readyBar").setAttribute("aria-valuenow", r);
+  const band = r>=100?4 : r>=75?3 : r>=50?2 : r>=25?1 : 0;
+  if(band!==lastBand){
+    lastBand = band;
+    const msgs = ["", "Good — your file is taking shape.",
+      "Halfway there — about 2 minutes left.",
+      "Almost there — one more stretch and this file works hard for you.",
+      "That&rsquo;s everything — a complete file."];
+    $("#milestone").innerHTML = msgs[band] || "";
+  }
+}
+
+/* ---------- navigation ---------- */
+function showStep(n){
+  current = n;
+  $$(".screen").forEach(sc => sc.classList.remove("active"));
+  const el = $("#screen-"+n);
+  el.classList.add("active");
+  el.querySelectorAll(".editnote").forEach(x => x.hidden = !returnToSummary);
+  updateHUD();
+  window.scrollTo({top:0, behavior:"smooth"});
+  const h = el.querySelector(".q");
+  if(h) h.focus({preventScroll:true});
+  save();
+}
+let stampTimer = null;
+function showStamp(text){
+  $("#stampText").textContent = text || "✓ Section filed";
+  const st = $("#stamp");
+  st.classList.add("show");
+  clearTimeout(stampTimer);
+  stampTimer = setTimeout(()=> st.classList.remove("show"), 1250);
+}
+function nextFrom(step){
+  doneSteps.add(step);
+  showStamp("✓ Section filed");
+  if(returnToSummary){ returnToSummary = false; buildDone(); showStep(8); return; }
+  if(step===7){ buildDone(); showStep(8); return; }
+  showStep(step+1);
+}
+function skipFrom(step){
+  if(returnToSummary){ returnToSummary = false; buildDone(); showStep(8); return; }
+  if(step===7){ buildDone(); showStep(8); return; }
+  showStep(step+1);
+}
+function backFrom(step){
+  if(returnToSummary){ returnToSummary = false; buildDone(); showStep(8); return; }
+  showStep(Math.max(0, step-1));
+}
+
+/* ---------- generic bindings ---------- */
+$$("[data-next]").forEach(b => b.addEventListener("click", ()=> nextFrom(+b.dataset.next)));
+$$("[data-skip]").forEach(b => b.addEventListener("click", ()=> skipFrom(+b.dataset.skip)));
+$$("[data-back]").forEach(b => b.addEventListener("click", ()=> backFrom(+b.dataset.back)));
+
+function bindText(id, field){
+  const el = $("#"+id);
+  el.addEventListener("input", ()=>{ A[field] = el.value; save(); updateHUD(); });
+}
+bindText("inName","name");
+bindText("inPhone","phone");
+bindText("inEmail","email");
+bindText("inOther","other");
+$("#inDob").addEventListener("input", e => { A.dob = e.target.value; save(); updateHUD(); });
+$("#inDecision").addEventListener("input", e => { A.decisionDate = e.target.value; save(); updateHUD(); });
+
+/* single-select tile groups (branch / era / status) */
+$$("[data-single]").forEach(tile => {
+  tile.addEventListener("click", ()=>{
+    const field = tile.dataset.single;
+    $$(`[data-single="${field}"]`).forEach(t => t.setAttribute("aria-pressed","false"));
+    tile.setAttribute("aria-pressed","true");
+    A[field] = tile.dataset.value;
+    if(field==="status"){
+      $("#decisionWrap").hidden = !(A.status==="rated" || A.status==="denied");
+    }
+    save(); updateHUD();
+  });
+});
+
+/* email yes/no */
+function setEmailYN(yes){
+  $("#ynEmailYes").setAttribute("aria-pressed", yes ? "true":"false");
+  $("#ynEmailNo").setAttribute("aria-pressed", yes ? "false":"true");
+  $("#emailWrap").hidden = !yes;
+  A.emailNA = !yes;
+  if(!yes){ A.email = ""; $("#inEmail").value = ""; }
+  save(); updateHUD();
+}
+$("#ynEmailYes").addEventListener("click", ()=> setEmailYN(true));
+$("#ynEmailNo").addEventListener("click", ()=> setEmailYN(false));
+
+/* condition multi-select */
+function refreshCondCount(){
+  const n = A.conditions.length;
+  $("#condCount").textContent = n===0 ? "" : (n + (n===1 ? " condition" : " conditions") + " selected — tap again to remove one.");
+}
+$$("[data-cond]").forEach(tile => {
+  tile.addEventListener("click", ()=>{
+    const v = tile.dataset.cond;
+    const on = tile.getAttribute("aria-pressed")==="true";
+    tile.setAttribute("aria-pressed", on ? "false":"true");
+    if(v==="__other"){
+      $("#otherWrap").hidden = on;
+      if(on){ A.other = ""; $("#inOther").value = ""; }
+    } else {
+      if(on){ A.conditions = A.conditions.filter(c => c!==v); }
+      else if(!A.conditions.includes(v)){ A.conditions.push(v); }
+    }
+    refreshCondCount(); save(); updateHUD();
+  });
+});
+
+/* year steppers */
+function setYear(field, val){
+  val = Math.max(1940, Math.min(2026, val));
+  A[field] = val;
+  const disp = field==="entryYear" ? $("#dispEntry") : $("#dispSep");
+  disp.textContent = val;
+  disp.classList.add("set");
+  save(); updateHUD();
+}
+$$("[data-stepbtn]").forEach(btn => {
+  btn.addEventListener("click", ()=>{
+    const field = btn.dataset.stepbtn, dir = +btn.dataset.dir;
+    const start = field==="entryYear" ? 2000 : 2004;
+    const cur = A[field] == null ? (dir>0 ? start-1 : start+1) : A[field];
+    setYear(field, cur + dir);
+  });
+});
+
+/* ---------- documents (photo instead of typing) ---------- */
+function setDocReceived(key, filename){
+  A.docs[key] = filename || "photo received";
+  const tile = key==="dd214" ? $("#docDD214") : $("#docVALetter");
+  const state = key==="dd214" ? $("#docDD214State") : $("#docVALetterState");
+  tile.classList.add("received");
+  state.textContent = "✓ Received — we\u2019ll read it for you" + (filename ? " (" + filename + ")" : "");
+  save(); updateHUD();
+}
+$("#docDD214").addEventListener("click", ()=> $("#fileDD214").click());
+$("#docVALetter").addEventListener("click", ()=> $("#fileVALetter").click());
+$("#fileDD214").addEventListener("change", e => { if(e.target.files && e.target.files[0]) setDocReceived("dd214", e.target.files[0].name); });
+$("#fileVALetter").addEventListener("change", e => { if(e.target.files && e.target.files[0]) setDocReceived("vaLetter", e.target.files[0].name); });
+
+/* ---------- speak instead (Web Speech API) ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if(!SR){
+  $$(".mic").forEach(b => b.style.display = "none");
+  $$(".mic-note").forEach(n => n.style.display = "none");
+} else {
+  $$(".mic").forEach(btn => {
+    btn.addEventListener("click", ()=>{
+      const target = $("#"+btn.dataset.mic);
+      const rec = new SR();
+      rec.lang = "en-US"; rec.interimResults = false; rec.maxAlternatives = 1;
+      btn.classList.add("listening");
+      rec.onresult = ev => {
+        const text = ev.results[0][0].transcript || "";
+        target.value = text;
+        target.dispatchEvent(new Event("input", {bubbles:true}));
+        target.focus();
+      };
+      rec.onend = ()=> btn.classList.remove("listening");
+      rec.onerror = ()=> btn.classList.remove("listening");
+      try{ rec.start(); }catch(e){ btn.classList.remove("listening"); }
+    });
+  });
+}
+
+/* ---------- dates ---------- */
+function fmtDate(iso){
+  if(!iso) return "";
+  const p = iso.split("-");
+  if(p.length!==3) return iso;
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return months[+p[1]-1] + " " + (+p[2]) + ", " + p[0];
+}
+function addOneYear(iso){
+  if(!iso) return null;
+  const p = iso.split("-");
+  return (+p[0]+1) + "-" + p[1] + "-" + p[2];
+}
+
+/* ---------- master record (schema-shaped) ---------- */
+function buildRecord(){
+  const needsDate = (A.status==="rated" || A.status==="denied");
+  const ratings = [];
+  if(needsDate || A.status==="rated" || A.status==="denied"){
+    A.conditions.forEach(c => {
+      const m = COND_META[c] || {name:c, code:""};
+      ratings.push({ condition:m.name, diagnostic_code:m.code, evaluation_percent:null,
+        effective_date:null, decision_type: A.status==="denied" ? "denied" : "continued" });
+    });
+  }
+  if(A.other && A.other.trim()){
+    ratings.push({ condition:A.other.trim(), diagnostic_code:"", evaluation_percent:null,
+      effective_date:null, decision_type: A.status==="denied" ? "denied" : "continued" });
+  }
+  return {
+    veteran: {
+      full_name: A.name || null,
+      va_file_number: A.vaFile || null,
+      address: null,
+      date_of_birth: A.dob || null,
+      phone: A.phone || null,
+      email: A.emailNA ? null : (A.email || null)
+    },
+    service: {
+      branch: A.branch || null,
+      entry_year: A.entryYear,
+      separation_year: A.sepYear,
+      entry_date: null,
+      separation_date: null,
+      service_era: A.era || null
+    },
+    decision: {
+      decision_date: A.decisionDate || null,
+      appeal_deadline: A.decisionDate ? addOneYear(A.decisionDate) : null,
+      claim_received_date: null,
+      combined_evaluation_percent: A.combined,
+      regional_office: null
+    },
+    ratings: ratings,
+    intake: {
+      status: A.status || null,
+      claimed_conditions: A.conditions.slice(),
+      documents_received: { dd214: !!A.docs.dd214, va_letter: !!A.docs.vaLetter }
+    },
+    source: {
+      document: "guided-intake (live demo)",
+      extractor: "veteran self-report — guided intake",
+      extracted_at: new Date().toISOString()
+    }
+  };
+}
+
+/* ---------- done screen ---------- */
+function buildDone(){
+  const r = computeReadiness();
+  $("#finalScore").textContent = r + "%";
+  const deadline = A.decisionDate ? addOneYear(A.decisionDate) : null;
+  let does = "<p>✅ <strong>This one record now fills 81 fields across 5 VA forms</strong> — the claim, the supplemental, the higher-level review, the Board appeal, and the representative form. You won&rsquo;t type any of it twice.</p>";
+  if(deadline){
+    does += "<p>⏰ <strong>Clock started:</strong> your appeal deadline is <strong>" + fmtDate(deadline) +
+      "</strong> — one year from your decision date (" + fmtDate(A.decisionDate) + "). The deadline engine watches it from here.</p>";
+  } else {
+    does += "<p>⏰ <strong>Clocks:</strong> the moment your VA decision letter is read, your appeal clock starts automatically — no one has to remember it.</p>";
+  }
+  if(A.docs.dd214 || A.docs.vaLetter){
+    does += "<p>📷 <strong>Documents queued for reading:</strong> the system extracts the dates and ratings from your photo" +
+      ((A.docs.dd214 && A.docs.vaLetter) ? "s" : "") + " — you never type what a document already says.</p>";
+  }
+  $("#doesBox").innerHTML = does;
+
+  const condText = A.conditions.length
+    ? A.conditions.map(c => (COND_META[c] ? COND_META[c].name : c)).join("; ") + (A.other ? "; " + A.other : "")
+    : "";
+  const lines = [
+    {label:"Name",        val:A.name, step:1},
+    {label:"Phone",       val:A.phone, step:2},
+    {label:"Email",       val:A.emailNA ? "No email — firm will use the phone" : A.email, step:2},
+    {label:"Birthday",    val:fmtDate(A.dob), step:3},
+    {label:"Branch",      val:A.branch ? A.branch.replace("United States ","") : "", step:4},
+    {label:"Service era", val:A.era, step:4},
+    {label:"Service years", val:(A.entryYear && A.sepYear) ? (A.entryYear + " – " + A.sepYear) : "", step:4},
+    {label:"Conditions",  val:condText, step:5},
+    {label:"Claim status",val:A.status ? STATUS_LABEL[A.status] : "", step:6},
+    {label:"Decision date", val:(A.status==="rated"||A.status==="denied") ? fmtDate(A.decisionDate) : "Not applicable yet", step:6},
+    {label:"Documents",   val:(A.docs.dd214||A.docs.vaLetter)
+        ? [A.docs.dd214?"DD214 ✓":null, A.docs.vaLetter?"VA letter ✓":null].filter(Boolean).join(" · ") : "", step:7}
+  ];
+  $("#summaryLines").innerHTML = "";
+  lines.forEach(L => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "summary-line";
+    b.setAttribute("aria-label", "Fix " + L.label);
+    b.innerHTML = "<span class='lab'>" + L.label + "</span>" +
+      (L.val ? "<span class='val'>" + L.val.replace(/</g,"&lt;") + "</span>"
+             : "<span class='val missing'>Not added yet — tap to add</span>") +
+      "<span class='fix'>Fix →</span>";
+    b.addEventListener("click", ()=>{ returnToSummary = true; showStep(L.step); });
+    $("#summaryLines").appendChild(b);
+  });
+
+  const missing = readinessItems().filter(it => !it.got);
+  if(missing.length){
+    $("#boostBox").hidden = false;
+    $("#boostList").innerHTML = missing.map(it =>
+      "<li>Add <strong>" + it.label + "</strong> — worth +" + it.pts + " readiness. <a href='#' data-boost='" + it.step + "'>Add it now</a></li>"
+    ).join("");
+    $$("#boostList a").forEach(a => a.addEventListener("click", e => {
+      e.preventDefault(); returnToSummary = true; showStep(+a.dataset.boost);
+    }));
+  } else {
+    $("#boostBox").hidden = true;
+  }
+  $("#jsonView").textContent = JSON.stringify(buildRecord(), null, 2);
+}
+
+/* ---------- rehydrate UI from answers (resume) ---------- */
+function applyAnswersToUI(){
+  $("#inName").value = A.name || "";
+  $("#inPhone").value = A.phone || "";
+  $("#inEmail").value = A.email || "";
+  $("#inDob").value = A.dob || "";
+  $("#inDecision").value = A.decisionDate || "";
+  $("#inOther").value = A.other || "";
+  if(A.email){ $("#ynEmailYes").setAttribute("aria-pressed","true"); $("#ynEmailNo").setAttribute("aria-pressed","false"); $("#emailWrap").hidden = false; }
+  if(A.emailNA){ $("#ynEmailNo").setAttribute("aria-pressed","true"); $("#ynEmailYes").setAttribute("aria-pressed","false"); $("#emailWrap").hidden = true; }
+  $$("[data-single]").forEach(t => {
+    t.setAttribute("aria-pressed", A[t.dataset.single]===t.dataset.value ? "true":"false");
+  });
+  $("#decisionWrap").hidden = !(A.status==="rated" || A.status==="denied");
+  $$("[data-cond]").forEach(t => {
+    const v = t.dataset.cond;
+    const on = v==="__other" ? !!A.other : A.conditions.includes(v);
+    t.setAttribute("aria-pressed", on ? "true":"false");
+    if(v==="__other") $("#otherWrap").hidden = !on;
+  });
+  refreshCondCount();
+  [["entryYear","#dispEntry"],["sepYear","#dispSep"]].forEach(([f,sel]) => {
+    const d = $(sel);
+    if(A[f]){ d.textContent = A[f]; d.classList.add("set"); }
+  });
+  if(A.docs.dd214) setDocReceived("dd214", A.docs.dd214);
+  if(A.docs.vaLetter) setDocReceived("vaLetter", A.docs.vaLetter);
+  updateHUD();
+}
+
+/* ---------- autoplay: watch it fill itself ---------- */
+function pause(ms){
+  return new Promise(res => {
+    const t0 = Date.now();
+    (function chk(){
+      if(!auto.on) return res(false);
+      if(Date.now()-t0 >= ms) return res(true);
+      setTimeout(chk, 60);
+    })();
+  });
+}
+async function pulseEl(el){
+  if(!el) return true;
+  el.classList.add("auto-pulse");
+  el.scrollIntoView({block:"center", behavior:"smooth"});
+  const ok = await pause(650);
+  el.classList.remove("auto-pulse");
+  return ok;
+}
+async function clickEl(el){
+  if(!await pulseEl(el)) return false;
+  el.click();
+  return pause(420);
+}
+async function typeInto(input, text, delay){
+  input.focus(); input.value = "";
+  input.dispatchEvent(new Event("input", {bubbles:true}));
+  for(const ch of text){
+    if(!auto.on) return false;
+    input.value += ch;
+    input.dispatchEvent(new Event("input", {bubbles:true}));
+    if(!await pause(delay)) return false;
+  }
+  return pause(350);
+}
+async function setField(input, val){
+  if(!await pulseEl(input)) return false;
+  input.value = val;
+  input.dispatchEvent(new Event("input", {bubbles:true}));
+  input.dispatchEvent(new Event("change", {bubbles:true}));
+  return pause(500);
+}
+const tileByVal = (field, val) => document.querySelector(`[data-single="${field}"][data-value="${val}"]`);
+const condTile  = v => document.querySelector(`[data-cond="${v}"]`);
+
+async function runAuto(){
+  A.vaFile = "999-88-7777";   /* from Calloway's VA letter — matches the rest of the demo */
+  A.combined = 80;
+  $("#milestone").textContent = "Showing the sample veteran — James R. Calloway.";
+  showStep(1);
+  if(!await pause(900)) return;
+  if(!await typeInto($("#inName"), "James R. Calloway", 60)) return;
+  nextFrom(1); if(!await pause(1600)) return;
+
+  if(!await typeInto($("#inPhone"), "(555) 014-2900", 42)) return;
+  if(!await clickEl($("#ynEmailYes"))) return;
+  if(!await typeInto($("#inEmail"), "james.calloway@example.com", 32)) return;
+  nextFrom(2); if(!await pause(1600)) return;
+
+  if(!await setField($("#inDob"), "1976-04-18")) return;
+  nextFrom(3); if(!await pause(1600)) return;
+
+  if(!await clickEl(tileByVal("branch","United States Army"))) return;
+  if(!await clickEl(tileByVal("era","Gulf War Era"))) return;
+  if(!await pulseEl($("#dispEntry"))) return;
+  setYear("entryYear", 1998);
+  if(!await pause(600)) return;
+  if(!await pulseEl($("#dispSep"))) return;
+  setYear("sepYear", 2004);
+  if(!await pause(800)) return;
+  nextFrom(4); if(!await pause(1600)) return;
+
+  for(const c of ["PTSD","Tinnitus","Back","Knees","Migraines"]){
+    if(!await clickEl(condTile(c))) return;
+  }
+  if(!await pause(800)) return;
+  nextFrom(5); if(!await pause(1600)) return;
+
+  if(!await clickEl(tileByVal("status","rated"))) return;
+  if(!await setField($("#inDecision"), "2026-10-06")) return;
+  nextFrom(6); if(!await pause(1600)) return;
+
+  if(!await pulseEl($("#docDD214"))) return;
+  setDocReceived("dd214", "DD214-photo.jpg");
+  if(!await pause(1000)) return;
+  if(!await pulseEl($("#docVALetter"))) return;
+  setDocReceived("vaLetter", "VA-decision-letter.jpg");
+  if(!await pause(1100)) return;
+  nextFrom(7);
+}
+function autoFinish(tookOver){
+  auto.on = false;
+  $("#autoBar").classList.remove("show");
+  document.removeEventListener("pointerdown", autoTapStop, true);
+  $$(".auto-pulse").forEach(el => el.classList.remove("auto-pulse"));
+  if(tookOver) $("#milestone").textContent = "You took over — carry on from here. Nothing was lost.";
+}
+function autoTapStop(e){ if(e.isTrusted && auto.on){ auto.on = false; autoFinish(true); } }
+document.addEventListener("pointerdown", autoTapStop, true);
+$("#btnStopAuto").addEventListener("click", ()=> autoFinish(true));
+$("#btnAuto").addEventListener("click", ()=>{
+  wipe();
+  A = freshAnswers(); doneSteps = new Set(); returnToSummary = false;
+  applyAnswersToUI();
+  auto.on = true;
+  $("#autoBar").classList.add("show");
+  $("#resumeBox").classList.remove("show");
+  runAuto().then(()=> autoFinish(false)).catch(()=> autoFinish(false));
+});
+
+/* ---------- start / resume / restart ---------- */
+$("#btnStart").addEventListener("click", ()=>{
+  $("#resumeBox").classList.remove("show");
+  showStep(1);
+});
+$("#btnResume").addEventListener("click", ()=>{
+  const s = loadSaved();
+  if(!s){ showStep(1); return; }
+  A = Object.assign(freshAnswers(), s.A || {});
+  A.docs = Object.assign({dd214:null, vaLetter:null}, (s.A||{}).docs || {});
+  doneSteps = new Set(s.done || []);
+  applyAnswersToUI();
+  $("#resumeBox").classList.remove("show");
+  const tgt = (s.current>=1 && s.current<=8) ? s.current : 1;
+  if(tgt===8) buildDone();
+  showStep(tgt);
+});
+$("#btnStartOver").addEventListener("click", ()=>{ wipe(); location.reload(); });
+$("#btnDoneOver").addEventListener("click", ()=>{ wipe(); location.reload(); });
+
+/* ---------- text size ---------- */
+$("#tsNormal").addEventListener("click", ()=>{
+  document.documentElement.classList.remove("big");
+  $("#tsNormal").setAttribute("aria-pressed","true");
+  $("#tsBig").setAttribute("aria-pressed","false");
+});
+$("#tsBig").addEventListener("click", ()=>{
+  document.documentElement.classList.add("big");
+  $("#tsBig").setAttribute("aria-pressed","true");
+  $("#tsNormal").setAttribute("aria-pressed","false");
+});
+
+/* ---------- init ---------- */
+(function init(){
+  const pips = $("#pips");
+  for(let i=0;i<7;i++){ pips.appendChild(document.createElement("span")); }
+  const s = loadSaved();
+  const hasProgress = s && (s.current>0 || (s.done && s.done.length) ||
+    (s.A && (s.A.name || s.A.phone || s.A.branch || (s.A.conditions && s.A.conditions.length))));
+  if(hasProgress) $("#resumeBox").classList.add("show");
+  updateHUD();
+})();
+</script>
+</body>
+</html>
