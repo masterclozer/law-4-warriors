@@ -627,10 +627,6 @@
           <p>Tell us about your service and your claim. A veteran advocate — not a call center — will review your information and reach out within one business day. Everything you share is confidential.</p>
           <div class="c-lines">
             <div class="c-line">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>
-              <div><b>Call Us</b><a href="tel:+18005550147">(800) 555-0147</a></div>
-            </div>
-            <div class="c-line">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
               <div><b>Email</b><a href="mailto:contact@law4warriors.com">contact@law4warriors.com</a></div>
             </div>
@@ -747,7 +743,6 @@
           <div>
             <h4>Contact</h4>
             <ul class="foot-contact">
-              <li><a href="tel:+18005550147">(800) 555-0147</a></li>
               <li><a href="mailto:contact@law4warriors.com">contact@law4warriors.com</a></li>
               <li>Mon–Fri · 8 AM – 8 PM ET</li>
               <li>Serving veterans nationwide</li>
@@ -820,7 +815,7 @@
       });
 
       // Consultation form -> posts the inquiry to the intake endpoint
-      var INQUIRY_ENDPOINT = 'https://app.law4warriors.com/inquiry';
+      var INQUIRY_ENDPOINT = 'https://104-248-235-127.sslip.io/inquiry';
       document.getElementById('consultForm').addEventListener('submit', function (e) {
         e.preventDefault();
         var form = e.target;
@@ -873,15 +868,26 @@
             website2: website2
           })
         }).then(function (res) {
-          if (!res.ok) { throw new Error('Request failed'); }
-          return res.json();
-        }).then(function (data) {
-          if (!data || data.ok !== true) { throw new Error('Request failed'); }
-          form.innerHTML = '<div class="f-confirm"><h3>We received your inquiry.</h3><p>Thank you for reaching out. A member of our team will reach out during your chosen callback window within one business day. Everything you shared with us is confidential.</p></div>';
+          return res.json().then(function (data) {
+            return { ok: res.ok, data: data };
+          }, function () {
+            return { ok: res.ok, data: null };
+          });
+        }).then(function (result) {
+          var data = result.data;
+          if (!result.ok || !data || data.ok !== true) {
+            var errText = data && (data.error || data.message);
+            btn.disabled = false;
+            btn.innerHTML = btnHTML;
+            showMsg(errText || 'Our online form is still being set up, so this request did not go through. Please reach us directly — email contact@law4warriors.com — and we will take it from there.');
+            return;
+          }
+          form.innerHTML = '<div class="f-confirm"><h3>We received your inquiry.</h3><p id="confirmMsg"></p></div>';
+          document.getElementById('confirmMsg').textContent = data.message || 'Thank you for reaching out. A member of our team will reach out during your chosen callback window within one business day. Everything you shared with us is confidential.';
         }).catch(function () {
           btn.disabled = false;
           btn.innerHTML = btnHTML;
-          showMsg('Our online form is still being set up, so this request did not go through. Please reach us directly — call (800) 555-0147 or email contact@law4warriors.com — and we will take it from there.');
+          showMsg('Our online form is still being set up, so this request did not go through. Please reach us directly — email contact@law4warriors.com — and we will take it from there.');
         });
       });
     </script>
